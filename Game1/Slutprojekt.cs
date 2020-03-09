@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Game1
 {
@@ -11,6 +12,20 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D pixel;
+        SpriteFont font;
+        List<Rectangle> rlg = new List<Rectangle>();
+        Player p;
+        Rectangle ground;
+        bool jump = false;
+        bool doubleJump = false;
+        int jumpS;
+        int jumpP = 15;
+        int g = 1;
+        int ww;
+        int wh;
+
+        KeyboardState oldstate;
 
         public Slutprojekt()
         {
@@ -26,6 +41,12 @@ namespace Game1
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            ww = Window.ClientBounds.Width;
+            wh = Window.ClientBounds.Height;
+            rlg.Add(ground = new Rectangle(0, wh - wh / 5, ww, wh));
+            rlg.Add(new Rectangle(0, 200, 100, 20));
+            rlg.Add(new Rectangle(400, 340, 100, 20));
+            p = new Player(wh);
 
             base.Initialize();
         }
@@ -40,6 +61,8 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            pixel = Content.Load<Texture2D>("pixel");
+            font = Content.Load<SpriteFont>("font");
         }
 
         /// <summary>
@@ -62,7 +85,71 @@ namespace Game1
                 Exit();
 
             // TODO: Add your update logic here
-
+            KeyboardState kstate = Keyboard.GetState();
+            if (kstate.IsKeyDown(Keys.D))
+            {
+                p.X += 5;
+                p.UpdatePosition();
+            }
+            if (kstate.IsKeyDown(Keys.A))
+            {
+                p.X -= 5;
+                p.UpdatePosition();
+            }
+            if (kstate.IsKeyDown(Keys.Space) && jump == false)
+            {
+                jump = true;
+                jumpS = jumpP;
+            }
+            else if (kstate.IsKeyDown(Keys.Space) && jump == true && doubleJump == false && oldstate.IsKeyUp(Keys.Space))
+            {
+                doubleJump = true;
+                jumpS = jumpP;
+            }
+            
+            if (jump == true)
+            {
+                p.Y -= jumpS;
+                p.UpdatePosition();
+                jumpS -= g;
+            }
+            foreach (var e in rlg)
+            {
+                if (p.B.Intersects(e))
+                {
+                    doubleJump = false;
+                    jump = false;
+                    p.Y = e.Y - p.Height;
+                    p.UpdatePosition();
+                    jumpS = 0;
+                }
+                if (p.T.Intersects(e))
+                {
+                    p.Y = e.Y + e.Height;
+                    p.UpdatePosition();
+                    jumpS *= -1;
+                }
+                if (p.R.Intersects(e))
+                {
+                    p.X = e.X + e.Width;
+                    p.UpdatePosition();
+                }
+                if (p.L.Intersects(e))
+                {
+                    p.X = e.X - p.Width;
+                    p.UpdatePosition();
+                }
+                if (p.P.Intersects(e) == false && jump == false)
+                {
+                    p.Y -= jumpS;
+                    p.UpdatePosition();
+                    if (jumpS > -6)
+                    {
+                        jumpS -= g;
+                    }
+                }
+            }
+            oldstate = Keyboard.GetState();
             base.Update(gameTime);
         }
 
@@ -75,6 +162,16 @@ namespace Game1
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            foreach(var e in rlg)
+            {
+                spriteBatch.Draw(pixel, e, Color.Black);
+            }
+            p.Draw(spriteBatch, pixel);
+
+
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
