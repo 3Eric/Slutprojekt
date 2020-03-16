@@ -15,7 +15,9 @@ namespace Game1
         Texture2D pixel;
         SpriteFont font;
         List<Rectangle> rlg = new List<Rectangle>();
+        List<Box> bl = new List<Box>();
         Player p;
+        Collision c = new Collision();
         Rectangle ground;
         bool jump = false;
         bool doubleJump = false;
@@ -46,6 +48,7 @@ namespace Game1
             rlg.Add(ground = new Rectangle(0, wh - wh / 5, ww, wh));
             rlg.Add(new Rectangle(0, 200, 100, 20));
             rlg.Add(new Rectangle(400, 340, 100, 20));
+            bl.Add(new Box(50, ground.Y - 30));
             p = new Player(wh);
 
             base.Initialize();
@@ -88,13 +91,15 @@ namespace Game1
             KeyboardState kstate = Keyboard.GetState();
             if (kstate.IsKeyDown(Keys.D))
             {
-                p.X += 5;
+                p.X += p.Speed;
                 p.UpdatePosition();
+                p.D = "R";
             }
             if (kstate.IsKeyDown(Keys.A))
             {
-                p.X -= 5;
+                p.X -= p.Speed;
                 p.UpdatePosition();
+                p.D = "L";
             }
             if (kstate.IsKeyDown(Keys.Space) && jump == false)
             {
@@ -106,48 +111,38 @@ namespace Game1
                 doubleJump = true;
                 jumpS = jumpP;
             }
-            
+            if (kstate.IsKeyDown(Keys.Enter))
+            {
+                foreach (var b in bl)
+                {
+                    if (b.BP == true)
+                    {
+                        if (p.D == "R")
+                        {
+                            b.BS = 10;
+                        }
+                        else
+                        {
+                            b.BS = -10;
+                        }
+                        b.BP = false;
+                        b.BT = true;
+                        b.Y = p.Y;
+                    }
+                }
+            }
+
+
             if (jump == true)
             {
                 p.Y -= jumpS;
                 p.UpdatePosition();
                 jumpS -= g;
             }
-            foreach (var e in rlg)
+            c.Check(p, rlg, bl, ref jump, ref doubleJump, ref jumpS, g, kstate, oldstate, ww);
+            foreach(var b in bl)
             {
-                if (p.B.Intersects(e))
-                {
-                    doubleJump = false;
-                    jump = false;
-                    p.Y = e.Y - p.Height;
-                    p.UpdatePosition();
-                    jumpS = 0;
-                }
-                if (p.T.Intersects(e))
-                {
-                    p.Y = e.Y + e.Height;
-                    p.UpdatePosition();
-                    jumpS *= -1;
-                }
-                if (p.R.Intersects(e))
-                {
-                    p.X = e.X + e.Width;
-                    p.UpdatePosition();
-                }
-                if (p.L.Intersects(e))
-                {
-                    p.X = e.X - p.Width;
-                    p.UpdatePosition();
-                }
-                if (p.P.Intersects(e) == false && jump == false)
-                {
-                    p.Y -= jumpS;
-                    p.UpdatePosition();
-                    if (jumpS > -6)
-                    {
-                        jumpS -= g;
-                    }
-                }
+                b.Update(p);
             }
             oldstate = Keyboard.GetState();
             base.Update(gameTime);
@@ -168,6 +163,14 @@ namespace Game1
                 spriteBatch.Draw(pixel, e, Color.Black);
             }
             p.Draw(spriteBatch, pixel);
+            foreach(var b in bl)
+            {
+                b.Draw(spriteBatch, pixel);
+                if (b.E == true)
+                {
+                    spriteBatch.DrawString(font, "E", new Vector2(b.X + b.Width / 2 - font.LineSpacing / 2, b.Y - font.LineSpacing), Color.White);
+                }
+            }
 
 
 

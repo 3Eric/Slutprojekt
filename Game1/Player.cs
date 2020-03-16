@@ -16,6 +16,9 @@ namespace Game1
         Rectangle playerL;
         Rectangle playerT;
         Rectangle playerB;
+        string playerD;
+        int playerSpeed;
+        //skapar spelaren
         public Player(int wh)
         {
             player = new Rectangle(0, wh - 50 - wh / 5, 20, 50);
@@ -23,8 +26,10 @@ namespace Game1
             playerL = new Rectangle(player.X + playerR.Width, player.Y, playerR.Width, player.Height);
             playerT = new Rectangle(player.X, player.Y - 1, player.Width, 1);
             playerB = new Rectangle(player.X, player.Y + player.Height, player.Width, 1);
+            playerD = "R";
+            playerSpeed = 5;
         }
-
+        //Uppdaterar spelarens position
         public void UpdatePosition()
         {
                 playerR.X = player.X;
@@ -36,11 +41,12 @@ namespace Game1
                 playerT.Y = player.Y - 1;
                 playerB.Y = player.Y + player.Height;
         }
-
+        //ritar spelaren
         public void Draw(SpriteBatch spriteBatch, Texture2D p)
         {
             spriteBatch.Draw(p, player, Color.Purple);
         }
+        //kunna hämta olika värden från spelaren
         public int Y
         {
             get { return player.Y; }
@@ -110,6 +116,16 @@ namespace Game1
         public Rectangle B
         {
             get { return playerB; }
+        }
+        public int Speed
+        {
+            get { return playerSpeed; }
+            set { playerSpeed = value; }
+        }
+        public string D
+        {
+            get { return playerD; }
+            set { playerD = value; }
         }
     }
 }

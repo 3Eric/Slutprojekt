@@ -41,6 +41,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Box.cs" />
+    <Compile Include="Collision.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Slutprojekt.cs" />
     <Compile Include="Program.cs" />
