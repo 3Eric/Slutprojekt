@@ -11,121 +11,108 @@ namespace Game1
 {
     class Player
     {
-        Rectangle player;
-        Rectangle playerR;
-        Rectangle playerL;
-        Rectangle playerT;
-        Rectangle playerB;
-        string playerD;
-        int playerSpeed;
+        public Rectangle player;
+        public Rectangle pRight;
+        public Rectangle pLeft;
+        public Rectangle pTop;
+        public Rectangle pBot;
+        public Rectangle gun;
+        string pDirection;
+        int pSpeed;
+        bool gotBox;
+        bool fall;
+        bool jump;
+        bool doubleJump;
+        int jumpS;
+        int jumpP;
         //skapar spelaren
-        public Player(int wh)
+        public Player(int ww, int wh)
         {
-            player = new Rectangle(0, wh - 50 - wh / 5, 20, 50);
-            playerR = new Rectangle(player.X, player.Y, player.Width / 2, player.Height);
-            playerL = new Rectangle(player.X + playerR.Width, player.Y, playerR.Width, player.Height);
-            playerT = new Rectangle(player.X, player.Y - 1, player.Width, 1);
-            playerB = new Rectangle(player.X, player.Y + player.Height, player.Width, 1);
-            playerD = "R";
-            playerSpeed = 5;
+            player = new Rectangle(0, wh - wh / 10 - wh / 5, ww / 40, wh / 10);
+            pRight = new Rectangle(player.X, player.Y, player.Width / 2, player.Height);
+            pLeft = new Rectangle(player.X + pRight.Width, player.Y, pRight.Width, player.Height);
+            pTop = new Rectangle(player.X, player.Y - 1, player.Width, 1);
+            pBot = new Rectangle(player.X, player.Y + player.Height - wh / 60 + 1, player.Width, wh / 60);
+            gun = new Rectangle(player.X + player.Width, player.Y + player.Width, ww / 80, wh / 60);
+            pDirection = "R";
+            pSpeed = ww / 160;
+            jumpS = 0;
+            jumpP = ww / 53;
+            jump = false;
+            doubleJump = false;
+            gotBox = false;
         }
         //Uppdaterar spelarens position
-        public void UpdatePosition()
+        public void UpdatePosition(int ww)
         {
-                playerR.X = player.X;
-                playerL.X = player.X + playerR.Width;
-                playerT.X = player.X;
-                playerB.X = player.X;
-                playerR.Y = player.Y;
-                playerL.Y = player.Y;
-                playerT.Y = player.Y - 1;
-                playerB.Y = player.Y + player.Height;
-        }
-        //ritar spelaren
-        public void Draw(SpriteBatch spriteBatch, Texture2D p)
-        {
-            spriteBatch.Draw(p, player, Color.Purple);
+            pRight.X = player.X;
+            pLeft.X = player.X + pRight.Width;
+            pTop.X = player.X;
+            pBot.X = player.X;
+            pRight.Y = player.Y;
+            pLeft.Y = player.Y;
+            if (gotBox == true)
+            {
+                pTop.Y = player.Y - ww / 26;
+            }
+            else
+            {
+                pTop.Y = player.Y - 1;
+            }
+            pBot.Y = player.Y + player.Height;
+            gun.Y = player.Y + player.Width;
+            if (pDirection == "R")
+            {
+                gun.X = player.X + player.Width;
+            }
+            else
+            {
+                gun.X = player.X - gun.Width;
+            }
         }
         //kunna hämta olika värden från spelaren
-        public int Y
-        {
-            get { return player.Y; }
-            set { player.Y = value; }
-        }
-        public int X
-        {
-            get { return player.X; }
-            set { player.X = value; }
-        }
-        public int RY
-        {
-            get { return playerR.Y; }
-        }
-        public int RX
-        {
-            get { return playerR.X; }
-        }
-        public int LY
-        {
-            get { return playerL.Y; }
-        }
-        public int LX
-        {
-            get { return playerL.X; }
-        }
-        public int TY
-        {
-            get { return playerT.Y; }
-        }
-        public int TX
-        {
-            get { return playerT.X; }
-        }
-        public int BY
-        {
-            get { return playerB.Y; }
-        }
-        public int BX
-        {
-            get { return playerB.X; }
-        }
-        public int Height
-        {
-            get { return player.Height; }
-        }
-        public int Width
-        {
-            get { return player.Width; }
-        }
-        public Rectangle P
-        {
-            get { return player; }
-        }
-        public Rectangle R
-        {
-            get { return playerR; }
-        }
-        public Rectangle L
-        {
-            get { return playerL; }
-        }
-        public Rectangle T
-        {
-            get { return playerT; }
-        }
-        public Rectangle B
-        {
-            get { return playerB; }
-        }
         public int Speed
         {
-            get { return playerSpeed; }
-            set { playerSpeed = value; }
+            get { return pSpeed; }
+            set { pSpeed = value; }
         }
         public string D
         {
-            get { return playerD; }
-            set { playerD = value; }
+            get { return pDirection; }
+            set { pDirection = value; }
+        }
+        public bool GB
+        {
+            get { return gotBox; }
+            set { gotBox = value; }
+        }
+        public int JS
+        {
+            get { return jumpS; }
+            set
+            {
+                jumpS = value;
+            }
+        }
+        public int JP
+        {
+            get { return jumpP; }
+            set { jumpP = value; }
+        }
+        public bool J
+        {
+            get { return jump; }
+            set { jump = value; }
+        }
+        public bool DJ
+        {
+            get { return doubleJump; }
+            set { doubleJump = value; }
+        }
+        public bool F
+        {
+            get { return fall; }
+            set { fall = value; }
         }
     }
 }

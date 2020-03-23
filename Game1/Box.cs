@@ -10,52 +10,48 @@ namespace Game1
 {
     class Box
     {
-        Rectangle box;
+        public Rectangle box;
+        public Rectangle aura;
         int boxSpeed;
         bool pickedUp;
         bool thrown;
         bool e;
-        public Box(int X, int Y)
+        int fallSpeed;
+        bool fall;
+        public Box(int X, int Y, int ww)
         {
-            box = new Rectangle(X, Y, 30, 30);
+            box = new Rectangle(X, Y, ww / 26, ww / 26);
+            aura = new Rectangle(box.X - (ww / 20 - ww / 26) / 2, box.Y - (ww / 20 - ww / 26) / 2, ww / 20, ww / 20);
             pickedUp = false;
             thrown = false;
             e = false;
         }
         //uppdaterar spelarens position
-        public void Update(Player p)
+        public void Update(Player p, int g)
         {
             //kollar ifall lådan är upplockad av spelaren
             if (pickedUp == true)
             {
-                box.X = p.X - 5;
-                box.Y = p.Y - box.Height;
+                box.X = p.player.X - (box.Width - p.player.Width) / 2;
+                box.Y = p.player.Y - box.Height;
             }
             else if (pickedUp == false && thrown == true)
             {
                 box.X += boxSpeed;
             }
+            else if (fall == true)
+            {
+                box.Y -= fallSpeed;
+                fallSpeed -= g;
+            }
         }
-        //ritar lådorna
-        public void Draw(SpriteBatch spriteBatch, Texture2D p)
+        // placerar "auran" vid lådans position
+        public void UpdateAura()
         {
-            spriteBatch.Draw(p, box, Color.SaddleBrown);
+            aura.X = box.X - (aura.Width - box.Width) / 2;
+            aura.Y = box.Y - (aura.Width - box.Width) / 2;
         }
         // kunna hämta olika värden vrådn lådor
-        public Rectangle B
-        {
-            get { return box; }
-        }
-        public int X
-        {
-            get { return box.X; }
-            set { box.X = value; }
-        }
-        public int Y
-        {
-            get { return box.Y; }
-            set { box.Y = value; }
-        }
         public bool BP
         {
             get { return pickedUp; }
@@ -66,14 +62,6 @@ namespace Game1
             get { return thrown; }
             set { thrown = value; }
         }
-        public int Height
-        {
-            get { return box.Height; }
-        }
-        public int Width
-        {
-            get { return box.Width; }
-        }
         public bool E
         {
             get { return e; }
@@ -83,6 +71,16 @@ namespace Game1
         {
             get { return boxSpeed; }
             set { boxSpeed = value; }
+        }
+        public int FS
+        {
+            get { return fallSpeed; }
+            set { fallSpeed = value; }
+        }
+        public bool F
+        {
+            get { return fall; }
+            set { fall = value; }
         }
     }
 }

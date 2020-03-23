@@ -5,9 +5,6 @@ using System.Collections.Generic;
 
 namespace Game1
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class Slutprojekt : Game
     {
         GraphicsDeviceManager graphics;
@@ -16,13 +13,11 @@ namespace Game1
         SpriteFont font;
         List<Rectangle> rlg = new List<Rectangle>();
         List<Box> bl = new List<Box>();
-        Player p;
+        List<Bullet> pl = new List<Bullet>();
+        List<Enemy> el = new List<Enemy>();
         Collision c = new Collision();
-        Rectangle ground;
-        bool jump = false;
-        bool doubleJump = false;
-        int jumpS;
-        int jumpP = 15;
+        Room room;
+        Player p;
         int g = 1;
         int ww;
         int wh;
@@ -34,33 +29,20 @@ namespace Game1
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
+
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
             ww = Window.ClientBounds.Width;
             wh = Window.ClientBounds.Height;
-            rlg.Add(ground = new Rectangle(0, wh - wh / 5, ww, wh));
-            rlg.Add(new Rectangle(0, 200, 100, 20));
-            rlg.Add(new Rectangle(400, 340, 100, 20));
-            bl.Add(new Box(50, ground.Y - 30));
-            p = new Player(wh);
-
+            room = new Room(ref rlg, ww, wh);
+            p = new Player(ww, wh);
+            
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
@@ -68,20 +50,11 @@ namespace Game1
             font = Content.Load<SpriteFont>("font");
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -91,88 +64,141 @@ namespace Game1
             KeyboardState kstate = Keyboard.GetState();
             if (kstate.IsKeyDown(Keys.D))
             {
-                p.X += p.Speed;
-                p.UpdatePosition();
+                p.player.X += p.Speed;
+                p.UpdatePosition(ww);
                 p.D = "R";
             }
             if (kstate.IsKeyDown(Keys.A))
             {
-                p.X -= p.Speed;
-                p.UpdatePosition();
+                p.player.X -= p.Speed;
+                p.UpdatePosition(ww);
                 p.D = "L";
             }
-            if (kstate.IsKeyDown(Keys.Space) && jump == false)
+            if (kstate.IsKeyDown(Keys.Space) && p.J == false)
             {
-                jump = true;
-                jumpS = jumpP;
+                p.J = true;
+                p.JS = p.JP;
             }
-            else if (kstate.IsKeyDown(Keys.Space) && jump == true && doubleJump == false && oldstate.IsKeyUp(Keys.Space))
+            else if (kstate.IsKeyDown(Keys.Space) && p.J == true && p.DJ == false && oldstate.IsKeyUp(Keys.Space))
             {
-                doubleJump = true;
-                jumpS = jumpP;
+                p.DJ = true;
+                p.JS = p.JP;
             }
-            if (kstate.IsKeyDown(Keys.Enter))
+            if (kstate.IsKeyDown(Keys.Enter) && oldstate.IsKeyUp(Keys.Enter))
             {
-                foreach (var b in bl)
+                if (p.GB == true)
                 {
-                    if (b.BP == true)
+                    p.GB = false;
+                    foreach (var b in bl)
                     {
-                        if (p.D == "R")
+                        if (b.BP == true)
                         {
-                            b.BS = 10;
+                            if (p.D == "R")
+                            {
+                                b.BS = 10;
+                                b.box.X = p.player.X + p.player.Width;
+                            }
+                            else
+                            {
+                                b.BS = -10;
+                                b.box.X = p.player.X - b.box.Width;
+                            }
+                            b.BP = false;
+                            b.BT = true;
+                            b.box.Y = p.player.Y;
                         }
-                        else
-                        {
-                            b.BS = -10;
-                        }
-                        b.BP = false;
-                        b.BT = true;
-                        b.Y = p.Y;
                     }
                 }
+                else
+                {
+                    pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh));
+                }
+            }
+            if (kstate.IsKeyDown(Keys.N) && oldstate.IsKeyUp(Keys.N))
+            {
+                bl.Add(new Box(50, wh - wh / 5 - 30, ww));
+            }
+            else if (kstate.IsKeyDown(Keys.M) && oldstate.IsKeyUp(Keys.M))
+            {
+                el.Add(new Enemy(120, 0, ww, wh));
+            }
+            else if (kstate.IsKeyDown(Keys.C) && oldstate.IsKeyUp(Keys.C))
+            {
+                el.Clear();
+                bl.Clear();
+            }
+            else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
+            {
+                room.Generate(ref rlg, ref bl, ref el, ww, wh);
             }
 
-
-            if (jump == true)
+            // spelaren faller
+            if (p.J == true || p.F == true)
             {
-                p.Y -= jumpS;
-                p.UpdatePosition();
-                jumpS -= g;
+                p.player.Y -= p.JS;
+                p.UpdatePosition(ww);
+                p.JS -= g;
             }
-            c.Check(p, rlg, bl, ref jump, ref doubleJump, ref jumpS, g, kstate, oldstate, ww);
-            foreach(var b in bl)
+            // flyttar alla fiender
+            foreach (var e in el)
             {
-                b.Update(p);
+                e.Move(ww);
+                if (e.F == true)
+                {
+                    e.enemy.Y -= e.FS;
+                    e.FS -= g;
+                }
+                e.UpdatePosition();
             }
+            // flyttar alla lådor ifall dom kastas eller släpps
+            foreach (var b in bl)
+            {
+                b.Update(p, g);
+            }
+            // gör så att skåtten rör sig
+            foreach (var p in pl)
+            {
+                p.Update();
+            }
+            // kollar ifall något kollidrerar
+            c.Check(p, rlg, ref bl, ref pl, ref el, g, kstate, oldstate, ww, wh);
             oldstate = Keyboard.GetState();
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            foreach(var e in rlg)
+            // ritar spelaren
+            spriteBatch.Draw(pixel, p.gun, Color.Black);
+            spriteBatch.Draw(pixel, p.player, Color.Purple);
+            // ritar fienden
+            foreach (var e in el)
+            {
+                spriteBatch.Draw(pixel, e.enemy, Color.Red);
+            }
+            // ritar marken och plattformar
+            foreach (var e in rlg)
             {
                 spriteBatch.Draw(pixel, e, Color.Black);
             }
-            p.Draw(spriteBatch, pixel);
+            // ritar all lådor
             foreach(var b in bl)
             {
-                b.Draw(spriteBatch, pixel);
+                spriteBatch.Draw(pixel, b.box, Color.SaddleBrown);
                 if (b.E == true)
                 {
-                    spriteBatch.DrawString(font, "E", new Vector2(b.X + b.Width / 2 - font.LineSpacing / 2, b.Y - font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "E", new Vector2(b.box.X + b.box.Width / 2 - font.LineSpacing / 2, b.box.Y - font.LineSpacing), Color.White);
                 }
             }
-
-
+            // ritar alla skått
+            foreach (var p in pl)
+            {
+                spriteBatch.Draw(pixel, p.bullet, Color.Purple);
+            }
 
             spriteBatch.End();
 
