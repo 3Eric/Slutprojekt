@@ -132,6 +132,7 @@ namespace Game1
                 room.Generate(ref rlg, ref bl, ref el, ww, wh);
             }
 
+
             // spelaren faller
             if (p.J == true || p.F == true)
             {
