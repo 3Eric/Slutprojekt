@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,13 @@ namespace Game1
     class Room
     {
         Random r = new Random();
+        int roomCounter;
+        int a;
+        int b;
         int rh;
         Rectangle ground;
+        Rectangle door;
+        bool e;
         int gap;
         int t;
         int l;
@@ -25,10 +31,39 @@ namespace Game1
             s = ww / 8;
             gap = wh / 10 + ww / 26 + wh / 24;
             rlg.Add(ground = new Rectangle(0, wh - t, ww, wh));
+            door = new Rectangle(ww - ww / 30, ground.Y - wh / 9, ww / 30, wh / 9);
+            a = 3;
+            b = 10;
         }
-        public void Generate(ref List<Rectangle> rlg, ref List<Box> bl, ref List<Enemy> el, int ww, int wh)
+        public bool Next(Player p, List<Enemy> el, KeyboardState kstate)
         {
+            if (p.player.Intersects(door) && el.Count == 0)
+            {
+                e = true;
+                if (kstate.IsKeyDown(Keys.E))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                e = false;
+            }
+            return false;
+        }
+        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Enemy> el, int ww, int wh)
+        {
+            roomCounter++;
+            if (roomCounter == b)
+            {
+                b *= 10;
+                a++;
+            }
+            p.player.X = 0;
+            p.player.Y = ground.Y - p.player.Height;
             rlg.Clear();
+            el.Clear();
+            bl.Clear();
             rh = r.Next(2);
             if (rh == 0)
             {
@@ -61,6 +96,25 @@ namespace Game1
                 rlg.Add(new Rectangle(ww - s, ground.Y - gap * 3, m, t));
                 rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 4, l, t));
             }
+        }
+        public Rectangle Door
+        {
+            get { return door; }
+            set { door = value; }
+        }
+        public bool E
+        {
+            get { return e; }
+            set { e = value; }
+        }
+        public int RC
+        {
+            get { return roomCounter; }
+            set { roomCounter = value; }
+        }
+        public int A
+        {
+            get { return a; }
         }
     }
 }

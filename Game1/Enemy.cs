@@ -17,6 +17,7 @@ namespace Game1
         int eSpeed;
         int fallSpeed;
         bool fall;
+        bool dead;
         public Enemy(int X, int Y, int ww, int wh)
         {
             enemy = new Rectangle(X, Y, ww / 40, wh / 10);
@@ -26,6 +27,7 @@ namespace Game1
             eBot = new Rectangle(enemy.X, enemy.Y + enemy.Height + 1, enemy.Width, 1);
             eSpeed = - ww / 266;
             fall = true;
+            dead = false;
         }
         //flyttar fienden
         public void Move(int ww)
@@ -69,6 +71,11 @@ namespace Game1
         {
             get { return fall; }
             set { fall = value; }
+        }
+        public bool Dead
+        {
+            get { return dead; }
+            set { dead = value; }
         }
     }
 }

@@ -124,12 +124,14 @@ namespace Game1
             }
             else if (kstate.IsKeyDown(Keys.C) && oldstate.IsKeyUp(Keys.C))
             {
+                p.HP = 3;
+                p.UpdateHealth(ww);
                 el.Clear();
                 bl.Clear();
             }
             else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
             {
-                room.Generate(ref rlg, ref bl, ref el, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref el, ww, wh);
             }
 
 
@@ -161,8 +163,19 @@ namespace Game1
             {
                 p.Update();
             }
+            if (room.Next(p, el, kstate) == true)
+            {
+                room.Generate(ref p, ref rlg, ref bl, ref el, ww, wh);
+            }
             // kollar ifall något kollidrerar
             c.Check(p, rlg, ref bl, ref pl, ref el, g, kstate, oldstate, ww, wh);
+            for (int i = 0; i < el.Count; i++)
+            {
+                if (el[i].Dead == true)
+                {
+                    el.RemoveAt(i);
+                }
+            }
             oldstate = Keyboard.GetState();
             base.Update(gameTime);
         }
@@ -173,6 +186,14 @@ namespace Game1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            if (el.Count == 0)
+            {
+                spriteBatch.Draw(pixel, room.Door, Color.Yellow);
+                if (room.E == true)
+                {
+                    spriteBatch.DrawString(font, "E", new Vector2(room.Door.X + room.Door.Width / 2 - font.LineSpacing / 2, room.Door.Y - font.LineSpacing), Color.White);
+                }
+            }
             // ritar spelaren
             spriteBatch.Draw(pixel, p.gun, Color.Black);
             spriteBatch.Draw(pixel, p.player, Color.Purple);
@@ -200,6 +221,12 @@ namespace Game1
             {
                 spriteBatch.Draw(pixel, p.bullet, Color.Purple);
             }
+            // rita spelarens liv
+            foreach (var hp in p.hpl)
+            {
+                spriteBatch.Draw(pixel, hp, Color.Red);
+            }
+            spriteBatch.DrawString(font, "R:" + room.RC, new Vector2(ww - font.LineSpacing * room.A, 0), Color.White);
 
             spriteBatch.End();
 

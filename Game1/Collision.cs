@@ -127,8 +127,11 @@ namespace Game1
             }
             else if (p.player.Y > wh)
             {
+                p.HP -= 1;
+                p.UpdateHealth(ww);
                 p.player.X = 0;
-                p.player.Y = wh - wh / 10 - wh / 5;
+                p.player.Y = wh - wh / 24 - p.player.Height;
+                p.JS = 0;
             }
             // kollar ifall något kolliderar med en låda
             foreach (var b in bl)
@@ -246,6 +249,7 @@ namespace Game1
                 {
                     if (pl[i].bullet.Intersects(e.enemy))
                     {
+                        e.Dead = true;
                         pl.RemoveAt(i);
                     }
                 }
