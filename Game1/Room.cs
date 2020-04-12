@@ -64,7 +64,8 @@ namespace Game1
             rlg.Clear();
             el.Clear();
             bl.Clear();
-            rh = r.Next(2);
+            //rh = r.Next(3);
+            rh = 1;
             if (rh == 0)
             {
                 rlg.Add(ground);
@@ -84,17 +85,61 @@ namespace Game1
                 bl.Add(new Box(ww / 2 - (m) / 2, ground.Y - gap * 4 - ww / 26, ww));
                 bl.Add(new Box(ww / 2 - (m) / 2 + m - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
             }
+            else if(rh == 1)
+            {
+                rlg.Add(ground);
+                rh = r.Next(2);
+                if(rh == 0)
+                {
+                    rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap, l, t));
+                    rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
+                    rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
+                }
+                else
+                {
+                    rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap, s, t));
+                }
+                rh = r.Next(2);
+                if (rh == 0)
+                {
+                    rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 2, s, t));
+                }
+                else
+                {
+                    rlg.Add(new Rectangle(ww / 4 - (m) / 2, ground.Y - gap * 2, m, t));
+                    rlg.Add(new Rectangle(ww * 3 / 4 - (m) / 2, ground.Y - gap * 2, m, t));
+                }
+                rh = r.Next(2);
+                if (rh == 0)
+                {
+                    rlg.Add(new Rectangle(0, ground.Y - gap * 3, m, t));
+                    rlg.Add(new Rectangle(ww - m, ground.Y - gap * 3, m, t));
+                }
+                else
+                {
+                    rlg.Add(new Rectangle(0, ground.Y - gap * 3, s, t));
+                    rlg.Add(new Rectangle(ww - s, ground.Y - gap * 3, m, t));
+                }
+            }
             else
             {
                 rlg.Add(new Rectangle(0, ground.Y, m, t));
                 rlg.Add(new Rectangle(0 + m + s, ground.Y, m, t));
+                bl.Add(new Box(m - ww / 26, ground.Y - ww / 26, ww));
                 rlg.Add(new Rectangle(0 + m * 2 + s * 2, ground.Y, m, t));
+                bl.Add(new Box(ww - m, ground.Y - ww / 26, ww));
                 rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap, s, t));
+                el.Add(new Enemy(ww - ww / 40, ground.Y - gap * 3 - wh / 10, ww, wh));
                 rlg.Add(new Rectangle(ww / 4 - (m) / 2, ground.Y - gap * 2, m, t));
+                bl.Add(new Box(m + s - ww / 26, ground.Y - gap * 2 - ww / 26, ww));
                 rlg.Add(new Rectangle(ww * 3 / 4 - (m) / 2, ground.Y - gap * 2, m, t));
+                bl.Add(new Box(ww - m - s, ground.Y - gap * 2 - ww / 26, ww));
                 rlg.Add(new Rectangle(0, ground.Y - gap * 3, s, t));
+                el.Add(new Enemy(0, ground.Y - gap * 3 - wh / 10, ww, wh));
                 rlg.Add(new Rectangle(ww - s, ground.Y - gap * 3, m, t));
                 rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 4, l, t));
+                bl.Add(new Box(ww / 2 - (l) / 2, ground.Y - gap * 4 - ww / 26, ww));
+                bl.Add(new Box(ww / 2 - (l) / 2 + l - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
             }
         }
         public Rectangle Door
