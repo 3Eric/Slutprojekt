@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Box.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="Chest.cs" />
     <Compile Include="Collision.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Player.cs" />

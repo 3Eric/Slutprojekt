@@ -26,7 +26,9 @@ namespace Game1
         int jumpS;
         int jumpP;
         int health;
+        int ammo;
         public List<Rectangle> hpl = new List<Rectangle>();
+        public List<Rectangle> al = new List<Rectangle>();
         //skapar spelaren
         public Player(int ww, int wh)
         {
@@ -44,7 +46,9 @@ namespace Game1
             doubleJump = false;
             gotBox = false;
             health = 3;
+            ammo = 5;
             UpdateHealth(ww);
+            UpdateAmmo(ww);
         }
         //Uppdaterar spelarens position
         public void UpdatePosition(int ww)
@@ -80,6 +84,14 @@ namespace Game1
             for (int i = 0; i < health; i++)
             {
                 hpl.Add(new Rectangle(ww / 80 * i + ww / 30 * i, 0, ww / 30, ww / 30));
+            }
+        }
+        public void UpdateAmmo(int ww)
+        {
+            al.Clear();
+            for (int i = 0; i < ammo; i++)
+            {
+                al.Add(new Rectangle(ww / 80 * i + ww / 40 * i, ww / 30 + ww / 80, ww / 40, ww / 40));
             }
         }
         //kunna hämta olika värden från spelaren
@@ -136,7 +148,19 @@ namespace Game1
         public int HP
         {
             get { return health; }
-            set { health = value; }
+            set
+            {
+                health = value;
+                if (health < 0)
+                {
+                    health = 0;
+                }
+            }
+        }
+        public int Ammo
+        {
+            get { return ammo; }
+            set { ammo = value; }
         }
     }
 }

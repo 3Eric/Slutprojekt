@@ -51,7 +51,7 @@ namespace Game1
             }
             return false;
         }
-        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Enemy> el, int ww, int wh)
+        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Enemy> el, int ww, int wh)
         {
             roomCounter++;
             if (roomCounter == b)
@@ -140,6 +140,17 @@ namespace Game1
                 rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 4, l, t));
                 bl.Add(new Box(ww / 2 - (l) / 2, ground.Y - gap * 4 - ww / 26, ww));
                 bl.Add(new Box(ww / 2 - (l) / 2 + l - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
+            }
+        }
+        public void SpawnLoot(string loot, List<Rectangle> hpl, List<Rectangle> al, int X, int Y, int ww)
+        {
+            if (loot == "hp")
+            {
+                hpl.Add(new Rectangle(X, Y, ww / 30, ww / 30));
+            }
+            else if (loot == "ammo")
+            {
+                al.Add(new Rectangle(X, Y, ww / 40, ww / 40));
             }
         }
         public Rectangle Door

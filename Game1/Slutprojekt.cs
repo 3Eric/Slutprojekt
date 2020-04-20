@@ -15,6 +15,9 @@ namespace Game1
         List<Box> bl = new List<Box>();
         List<Bullet> pl = new List<Bullet>();
         List<Enemy> el = new List<Enemy>();
+        List<Chest> cl = new List<Chest>();
+        List<Rectangle> hpl = new List<Rectangle>();
+        List<Rectangle> al = new List<Rectangle>();
         Collision c = new Collision();
         Room room;
         Player p;
@@ -109,8 +112,10 @@ namespace Game1
                         }
                     }
                 }
-                else
+                else if (p.Ammo > 0)
                 {
+                    p.Ammo--;
+                    p.UpdateAmmo(ww);
                     pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh));
                 }
             }
@@ -126,12 +131,14 @@ namespace Game1
             {
                 p.HP = 3;
                 p.UpdateHealth(ww);
+                p.Ammo = 5;
+                p.UpdateAmmo(ww);
                 el.Clear();
                 bl.Clear();
             }
             else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
             {
-                room.Generate(ref p, ref rlg, ref bl, ref el, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ww, wh);
             }
 
 
@@ -165,14 +172,18 @@ namespace Game1
             }
             if (room.Next(p, el, kstate) == true)
             {
-                room.Generate(ref p, ref rlg, ref bl, ref el, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ww, wh);
             }
             // kollar ifall något kollidrerar
-            c.Check(p, rlg, ref bl, ref pl, ref el, g, kstate, oldstate, ww, wh);
+            c.Check(p, rlg, ref bl, ref pl, ref el, ref hpl, ref al, g, kstate, oldstate, ww, wh);
             for (int i = 0; i < el.Count; i++)
             {
                 if (el[i].Dead == true)
                 {
+                    if (el[i].GL == true)
+                    {
+                        room.SpawnLoot(el[i].Loot, hpl, al, el[i].enemy.X, el[i].enemy.Y, ww);
+                    }
                     el.RemoveAt(i);
                 }
             }
@@ -201,11 +212,12 @@ namespace Game1
             foreach (var e in el)
             {
                 spriteBatch.Draw(pixel, e.enemy, Color.Red);
+                spriteBatch.Draw(pixel, e.eTop, Color.Green);
             }
             // ritar marken och plattformar
             foreach (var e in rlg)
             {
-                spriteBatch.Draw(pixel, e, Color.Black);
+                spriteBatch.Draw(pixel, e, Color.DarkSlateGray);
             }
             // ritar all lådor
             foreach(var b in bl)
@@ -221,10 +233,24 @@ namespace Game1
             {
                 spriteBatch.Draw(pixel, p.bullet, Color.Purple);
             }
-            // rita spelarens liv
+            // ritar spelarens liv
             foreach (var hp in p.hpl)
             {
                 spriteBatch.Draw(pixel, hp, Color.Red);
+            }
+            // ritar spelarens ammo
+            foreach (var a in p.al)
+            {
+                spriteBatch.Draw(pixel, a, Color.Black);
+            }
+            // ritar loot
+            foreach (var hp in hpl)
+            {
+                spriteBatch.Draw(pixel, hp, Color.Red);
+            }
+            foreach (var a in al)
+            {
+                spriteBatch.Draw(pixel, a, Color.Black);
             }
             spriteBatch.DrawString(font, "R:" + room.RC, new Vector2(ww - font.LineSpacing * room.A, 0), Color.White);
 

@@ -11,7 +11,7 @@ namespace Game1
     class Collision
     {
         //Kollar ifall spelaren kolliderar med ett objekt
-        public void Check(Player p, List<Rectangle> rlg, ref List<Box> bl, ref List<Bullet> pl, ref List<Enemy> el, int g, KeyboardState kstate, KeyboardState oldstate, int ww, int wh)
+        public void Check(Player p, List<Rectangle> rlg, ref List<Box> bl, ref List<Bullet> pl, ref List<Enemy> el, ref List<Rectangle> hpl, ref List<Rectangle> al, int g, KeyboardState kstate, KeyboardState oldstate, int ww, int wh)
         {
             //kollar ifall något kollidrerar med marken eller en platform
             foreach (var r in rlg)
@@ -213,13 +213,12 @@ namespace Game1
                     {
                         e.F = true;
                     }
-                    if (e.eTop.Intersects(b.box))
-                    {
-                        e.enemy.Y = b.box.Y + b.box.Height;
-                        e.UpdatePosition();
-                    }
                     if (e.eRight.Intersects(b.box))
                     {
+                        if (b.BT == true)
+                        {
+                            e.Dead = true;
+                        }
                         b.BT = false;
                         e.enemy.X = b.box.X + b.box.Width;
                         e.Speed *= -1;
@@ -227,6 +226,10 @@ namespace Game1
                     }
                     if (e.eLeft.Intersects(b.box))
                     {
+                        if (b.BT == true)
+                        {
+                            e.Dead = true;
+                        }
                         b.BT = false;
                         e.enemy.X = b.box.X - e.enemy.Width;
                         e.Speed *= -1;
@@ -242,9 +245,10 @@ namespace Game1
                     }
                 }
             }
-            // kollar ifall ett skått kolliderar med en fiende
+            // kollar ifall skått eller spelar kolliderar med en fiende
             foreach (var e in el)
             {
+                // skått
                 for (int i = 0; i < pl.Count; i++)
                 {
                     if (pl[i].bullet.Intersects(e.enemy))
@@ -252,6 +256,36 @@ namespace Game1
                         e.Dead = true;
                         pl.RemoveAt(i);
                     }
+                }
+                // spelare
+                if (e.eTop.Intersects(p.pBot))
+                {
+                    e.Dead = true;
+                    p.JS = p.JP * 3 / 4;
+                }
+                else if (e.enemy.Intersects(p.player))
+                {
+                    p.HP--;
+                    p.UpdateHealth(ww);
+                }
+            }
+            // kollar ifall spelaren kolliderar med loot
+            for (int i = 0; i < hpl.Count; i++)
+            {
+                if (hpl[i].Intersects(p.player) && p.HP < 3)
+                {
+                    p.HP++;
+                    p.UpdateHealth(ww);
+                    hpl.RemoveAt(i);
+                }
+            }
+            for (int i = 0; i < al.Count; i++)
+            {
+                if (al[i].Intersects(p.player) && p.Ammo < 5)
+                {
+                    p.Ammo++;
+                    p.UpdateAmmo(ww);
+                    al.RemoveAt(i);
                 }
             }
         }

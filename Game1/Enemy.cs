@@ -9,6 +9,7 @@ namespace Game1
 {
     class Enemy
     {
+        Random r = new Random();
         public Rectangle enemy;
         public Rectangle eRight;
         public Rectangle eLeft;
@@ -18,16 +19,37 @@ namespace Game1
         int fallSpeed;
         bool fall;
         bool dead;
+        bool gotLoot;
+        string loot;
+        int lnr;
         public Enemy(int X, int Y, int ww, int wh)
         {
             enemy = new Rectangle(X, Y, ww / 40, wh / 10);
             eRight = new Rectangle(enemy.X, enemy.Y, enemy.Width / 2, enemy.Height);
             eLeft = new Rectangle(enemy.X + eRight.Width, enemy.Y, eRight.Width, enemy.Height);
-            eTop = new Rectangle(enemy.X, enemy.Y - 1, enemy.Width, 1);
+            eTop = new Rectangle(enemy.X, enemy.Y - 1, enemy.Width, enemy.Height / 3);
             eBot = new Rectangle(enemy.X, enemy.Y + enemy.Height + 1, enemy.Width, 1);
             eSpeed = - ww / 266;
             fall = true;
             dead = false;
+            lnr = r.Next(10);
+            if (lnr == 0)
+            {
+                gotLoot = true;
+                lnr = r.Next(2);
+                if (lnr == 0)
+                {
+                    loot = "ammo";
+                }
+                else
+                {
+                    loot = "hp";
+                }
+            }
+            else
+            {
+                gotLoot = false;
+            }
         }
         //flyttar fienden
         public void Move(int ww)
@@ -76,6 +98,14 @@ namespace Game1
         {
             get { return dead; }
             set { dead = value; }
+        }
+        public bool GL
+        {
+            get { return gotLoot; }
+        }
+        public string Loot
+        {
+            get { return loot; }
         }
     }
 }
