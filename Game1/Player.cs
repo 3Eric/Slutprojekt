@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace Game1
 {
     class Player
     {
+        public Stopwatch sw = new Stopwatch();
         public Rectangle player;
         public Rectangle pRight;
         public Rectangle pLeft;

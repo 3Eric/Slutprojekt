@@ -11,7 +11,10 @@ namespace Game1
     class Collision
     {
         //Kollar ifall spelaren kolliderar med ett objekt
-        public void Check(Player p, List<Rectangle> rlg, ref List<Box> bl, ref List<Bullet> pl, ref List<Enemy> el, ref List<Rectangle> hpl, ref List<Rectangle> al, int g, KeyboardState kstate, KeyboardState oldstate, int ww, int wh)
+        /// <summary>
+        /// Kollar ifall något kolliderar
+        /// </summary>>
+        public void Check(Player p, ref Room room, List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Bullet> pl, ref List<Enemy> el, ref List<Rectangle> hpl, ref List<Rectangle> al, int g, KeyboardState kstate, KeyboardState oldstate, int ww, int wh)
         {
             //kollar ifall något kollidrerar med marken eller en platform
             foreach (var r in rlg)
@@ -128,6 +131,7 @@ namespace Game1
             else if (p.player.Y > wh)
             {
                 p.HP -= 1;
+                p.sw.Start();
                 p.UpdateHealth(ww);
                 p.player.X = 0;
                 p.player.Y = wh - wh / 24 - p.player.Height;
@@ -245,6 +249,23 @@ namespace Game1
                     }
                 }
             }
+            // kistor
+            foreach (var c in cl)
+            {
+                if (p.player.Intersects(c.chest) && el.Count == 0 && c.Open == false)
+                {
+                    c.E = true;
+                }
+                else
+                {
+                    c.E = false;
+                }
+                if (p.player.Intersects(c.chest) && kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && c.Open == false)
+                {
+                    c.Open = true;
+                    room.SpawnLoot(c.Loot, hpl, al, c.chest.X, c.chest.Y, ww);
+                }
+            }
             // kollar ifall skått eller spelar kolliderar med en fiende
             foreach (var e in el)
             {
@@ -263,9 +284,10 @@ namespace Game1
                     e.Dead = true;
                     p.JS = p.JP * 3 / 4;
                 }
-                else if (e.enemy.Intersects(p.player))
+                else if (e.enemy.Intersects(p.player) && p.sw.ElapsedMilliseconds == 0)
                 {
                     p.HP--;
+                    p.sw.Start();
                     p.UpdateHealth(ww);
                 }
             }

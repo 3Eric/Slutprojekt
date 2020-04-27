@@ -51,7 +51,10 @@ namespace Game1
             }
             return false;
         }
-        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Enemy> el, int ww, int wh)
+        /// <summary>
+        /// Skapar ett nytt rum
+        /// </summary>
+        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Enemy> el, ref List<Rectangle> al, ref List<Rectangle> hpl, int ww, int wh)
         {
             roomCounter++;
             if (roomCounter == b)
@@ -64,6 +67,9 @@ namespace Game1
             rlg.Clear();
             el.Clear();
             bl.Clear();
+            cl.Clear();
+            al.Clear();
+            hpl.Clear();
             //rh = r.Next(3);
             rh = 1;
             if (rh == 0)
@@ -152,6 +158,10 @@ namespace Game1
             {
                 al.Add(new Rectangle(X, Y, ww / 40, ww / 40));
             }
+        }
+        public Rectangle Ground
+        {
+            get { return ground; }
         }
         public Rectangle Door
         {

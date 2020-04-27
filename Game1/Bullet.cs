@@ -24,7 +24,9 @@ namespace Game1
                 bulletSpeed = - ww / 80;
             }
         }
-        // skåtter flyttas
+        /// <summary>
+        /// Flyttar skåtten
+        /// </summary>
         public void Update()
         {
             bullet.X += bulletSpeed;

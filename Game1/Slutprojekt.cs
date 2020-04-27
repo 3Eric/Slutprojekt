@@ -119,13 +119,17 @@ namespace Game1
                     pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh));
                 }
             }
-            if (kstate.IsKeyDown(Keys.N) && oldstate.IsKeyUp(Keys.N))
+            if (kstate.IsKeyDown(Keys.B) && oldstate.IsKeyUp(Keys.B))
             {
                 bl.Add(new Box(50, wh - wh / 5 - 30, ww));
             }
             else if (kstate.IsKeyDown(Keys.M) && oldstate.IsKeyUp(Keys.M))
             {
                 el.Add(new Enemy(120, 0, ww, wh));
+            }
+            else if (kstate.IsKeyDown(Keys.N) && oldstate.IsKeyUp(Keys.N))
+            {
+                cl.Add(new Chest(100, room.Ground.Y - ww / 26, ww));
             }
             else if (kstate.IsKeyDown(Keys.C) && oldstate.IsKeyUp(Keys.C))
             {
@@ -135,10 +139,13 @@ namespace Game1
                 p.UpdateAmmo(ww);
                 el.Clear();
                 bl.Clear();
+                cl.Clear();
+                al.Clear();
+                hpl.Clear();
             }
             else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
             {
-                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ref al, ref hpl, ww, wh);
             }
 
 
@@ -172,10 +179,10 @@ namespace Game1
             }
             if (room.Next(p, el, kstate) == true)
             {
-                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ref al, ref hpl, ww, wh);
             }
             // kollar ifall något kollidrerar
-            c.Check(p, rlg, ref bl, ref pl, ref el, ref hpl, ref al, g, kstate, oldstate, ww, wh);
+            c.Check(p, ref room, rlg, ref bl, ref cl, ref pl, ref el, ref hpl, ref al, g, kstate, oldstate, ww, wh);
             for (int i = 0; i < el.Count; i++)
             {
                 if (el[i].Dead == true)
@@ -186,6 +193,10 @@ namespace Game1
                     }
                     el.RemoveAt(i);
                 }
+            }
+            if (p.sw.ElapsedMilliseconds > 500)
+            {
+                p.sw.Reset();
             }
             oldstate = Keyboard.GetState();
             base.Update(gameTime);
@@ -203,6 +214,21 @@ namespace Game1
                 if (room.E == true)
                 {
                     spriteBatch.DrawString(font, "E", new Vector2(room.Door.X + room.Door.Width / 2 - font.LineSpacing / 2, room.Door.Y - font.LineSpacing), Color.White);
+                }
+            }
+            // ritar alla kistor
+            foreach (var c in cl)
+            {
+                spriteBatch.Draw(pixel, c.chest, Color.SaddleBrown);
+                spriteBatch.Draw(pixel, c.mark, c.Color);
+                if (c.E == true)
+                {
+                    spriteBatch.DrawString(font, "E", new Vector2(c.chest.X + c.chest.Width / 2 - font.LineSpacing / 2, c.chest.Y - font.LineSpacing), Color.White);
+                }
+                if (c.Open == true)
+                {
+                    spriteBatch.Draw(pixel, c.lid, Color.SaddleBrown);
+                    spriteBatch.Draw(pixel, c.inside, Color.Black);
                 }
             }
             // ritar spelaren
