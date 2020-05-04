@@ -54,7 +54,7 @@ namespace Game1
         /// <summary>
         /// Skapar ett nytt rum
         /// </summary>
-        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Enemy> el, ref List<Rectangle> al, ref List<Rectangle> hpl, int ww, int wh)
+        public void Generate(ref Player p, ref List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Loot> ll, ref List<Enemy> el, int ww, int wh)
         {
             roomCounter++;
             if (roomCounter == b)
@@ -68,8 +68,7 @@ namespace Game1
             el.Clear();
             bl.Clear();
             cl.Clear();
-            al.Clear();
-            hpl.Clear();
+            ll.Clear();
             //rh = r.Next(3);
             rh = 1;
             if (rh == 0)
@@ -146,17 +145,6 @@ namespace Game1
                 rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 4, l, t));
                 bl.Add(new Box(ww / 2 - (l) / 2, ground.Y - gap * 4 - ww / 26, ww));
                 bl.Add(new Box(ww / 2 - (l) / 2 + l - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
-            }
-        }
-        public void SpawnLoot(string loot, List<Rectangle> hpl, List<Rectangle> al, int X, int Y, int ww)
-        {
-            if (loot == "hp")
-            {
-                hpl.Add(new Rectangle(X, Y, ww / 30, ww / 30));
-            }
-            else if (loot == "ammo")
-            {
-                al.Add(new Rectangle(X, Y, ww / 40, ww / 40));
             }
         }
         public Rectangle Ground

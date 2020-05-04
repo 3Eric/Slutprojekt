@@ -16,8 +16,7 @@ namespace Game1
         List<Bullet> pl = new List<Bullet>();
         List<Enemy> el = new List<Enemy>();
         List<Chest> cl = new List<Chest>();
-        List<Rectangle> hpl = new List<Rectangle>();
-        List<Rectangle> al = new List<Rectangle>();
+        List<Loot> ll = new List<Loot>();
         Collision c = new Collision();
         Room room;
         Player p;
@@ -133,19 +132,22 @@ namespace Game1
             }
             else if (kstate.IsKeyDown(Keys.C) && oldstate.IsKeyUp(Keys.C))
             {
-                p.HP = 3;
+                p.HP = p.MHP;
                 p.UpdateHealth(ww);
-                p.Ammo = 5;
+                p.Ammo = p.MAmmo;
                 p.UpdateAmmo(ww);
                 el.Clear();
                 bl.Clear();
                 cl.Clear();
-                al.Clear();
-                hpl.Clear();
+                ll.Clear();
             }
             else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
             {
-                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ref al, ref hpl, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
+            }
+            else if (kstate.IsKeyDown(Keys.L) && oldstate.IsKeyUp(Keys.L))
+            {
+                ll.Add(new Loot(0, 0, ww, "hp"));
             }
 
 
@@ -179,21 +181,27 @@ namespace Game1
             }
             if (room.Next(p, el, kstate) == true)
             {
-                room.Generate(ref p, ref rlg, ref bl, ref cl, ref el, ref al, ref hpl, ww, wh);
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
             }
             // kollar ifall något kollidrerar
-            c.Check(p, ref room, rlg, ref bl, ref cl, ref pl, ref el, ref hpl, ref al, g, kstate, oldstate, ww, wh);
+            c.Check(p, ref room, rlg, ref bl, ref cl, ref pl, ref el, ref ll, g, kstate, oldstate, ww, wh);
+            // kollar ifall en fiende har dött
             for (int i = 0; i < el.Count; i++)
             {
                 if (el[i].Dead == true)
                 {
                     if (el[i].GL == true)
                     {
-                        room.SpawnLoot(el[i].Loot, hpl, al, el[i].enemy.X, el[i].enemy.Y, ww);
+                        ll.Add(new Loot(el[i].enemy.X, el[i].enemy.Y, ww, el[i].Loot));
                     }
                     el.RemoveAt(i);
                 }
             }
+            foreach (var l in ll)
+            {
+                l.Update(g);
+            }
+            // Gör så att spelaren kan ta skada igen
             if (p.sw.ElapsedMilliseconds > 500)
             {
                 p.sw.Reset();
@@ -238,7 +246,6 @@ namespace Game1
             foreach (var e in el)
             {
                 spriteBatch.Draw(pixel, e.enemy, Color.Red);
-                spriteBatch.Draw(pixel, e.eTop, Color.Green);
             }
             // ritar marken och plattformar
             foreach (var e in rlg)
@@ -270,13 +277,9 @@ namespace Game1
                 spriteBatch.Draw(pixel, a, Color.Black);
             }
             // ritar loot
-            foreach (var hp in hpl)
+            foreach (var l in ll)
             {
-                spriteBatch.Draw(pixel, hp, Color.Red);
-            }
-            foreach (var a in al)
-            {
-                spriteBatch.Draw(pixel, a, Color.Black);
+                spriteBatch.Draw(pixel, l.drop, l.C);
             }
             spriteBatch.DrawString(font, "R:" + room.RC, new Vector2(ww - font.LineSpacing * room.A, 0), Color.White);
 

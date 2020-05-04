@@ -25,8 +25,12 @@ namespace Game1
             pickedUp = false;
             thrown = false;
             e = false;
+            fallSpeed = 0;
+            fall = false;
         }
-        //uppdaterar spelarens position
+        /// <summary>
+        /// uppdaterar boxens position
+        /// </summary>
         public void Update(Player p, int g)
         {
             //kollar ifall lådan är upplockad av spelaren

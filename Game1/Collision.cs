@@ -14,7 +14,7 @@ namespace Game1
         /// <summary>
         /// Kollar ifall något kolliderar
         /// </summary>>
-        public void Check(Player p, ref Room room, List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Bullet> pl, ref List<Enemy> el, ref List<Rectangle> hpl, ref List<Rectangle> al, int g, KeyboardState kstate, KeyboardState oldstate, int ww, int wh)
+        public void Check(Player p, ref Room room, List<Rectangle> rlg, ref List<Box> bl, ref List<Chest> cl, ref List<Bullet> pl, ref List<Enemy> el, ref List<Loot> ll, int g, KeyboardState kstate, KeyboardState oldstate, int ww, int wh)
         {
             //kollar ifall något kollidrerar med marken eller en platform
             foreach (var r in rlg)
@@ -100,7 +100,7 @@ namespace Game1
                     }
                     else if (bl[i].box.Intersects(r) && bl[i].BP == false)
                     {
-                        bl[i].box.Y = r.Y - bl[i].box.Width;
+                        bl[i].box.Y = r.Y - bl[i].box.Height;
                         bl[i].FS = 0;
                         bl[i].F = false;
                         bl[i].UpdateAura();
@@ -108,6 +108,17 @@ namespace Game1
                     else
                     {
                         bl[i].F = true;
+                    }
+                }
+                // loot
+                foreach (var l in ll)
+                {
+                    if (l.drop.Intersects(r))
+                    {
+                        l.drop.Y = r.Y - l.drop.Height;
+                        l.S = 0;
+                        l.FS = 0;
+                        l.F = false;
                     }
                 }
                 // skått
@@ -263,7 +274,7 @@ namespace Game1
                 if (p.player.Intersects(c.chest) && kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && c.Open == false)
                 {
                     c.Open = true;
-                    room.SpawnLoot(c.Loot, hpl, al, c.chest.X, c.chest.Y, ww);
+                    ll.Add(new Loot(c.inside.X + c.inside.Width / 3, c.chest.Y, ww, c.Loot));
                 }
             }
             // kollar ifall skått eller spelar kolliderar med en fiende
@@ -292,22 +303,24 @@ namespace Game1
                 }
             }
             // kollar ifall spelaren kolliderar med loot
-            for (int i = 0; i < hpl.Count; i++)
+            for (int i = 0; i < ll.Count; i++)
             {
-                if (hpl[i].Intersects(p.player) && p.HP < 3)
+                if (p.player.Intersects(ll[i].drop) && p.HP < p.MHP && ll[i].T == "hp")
                 {
                     p.HP++;
                     p.UpdateHealth(ww);
-                    hpl.RemoveAt(i);
+                    ll.RemoveAt(i);
                 }
-            }
-            for (int i = 0; i < al.Count; i++)
-            {
-                if (al[i].Intersects(p.player) && p.Ammo < 5)
+                else if (p.player.Intersects(ll[i].drop) && p.Ammo < p.MAmmo && ll[i].T == "ammo")
                 {
                     p.Ammo++;
                     p.UpdateAmmo(ww);
-                    al.RemoveAt(i);
+                    ll.RemoveAt(i);
+                }
+                else if (p.player.Intersects(ll[i].drop) && (ll[i].T != "ammo" || ll[i].T != "hp"))
+                {
+                    ll.RemoveAt(i);
+                    p.StatUpgrade(ww);
                 }
             }
         }

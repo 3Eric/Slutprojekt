@@ -24,7 +24,7 @@ namespace Game1
         int lnr;
         public Enemy(int X, int Y, int ww, int wh)
         {
-            enemy = new Rectangle(X, Y, ww / 40, wh / 10);
+            enemy = new Rectangle(X, Y, ww / 25, wh / 10);
             eRight = new Rectangle(enemy.X, enemy.Y, enemy.Width / 2, enemy.Height);
             eLeft = new Rectangle(enemy.X + eRight.Width, enemy.Y, eRight.Width, enemy.Height);
             eTop = new Rectangle(enemy.X, enemy.Y - 1, enemy.Width, enemy.Height / 3);
@@ -51,7 +51,9 @@ namespace Game1
                 gotLoot = false;
             }
         }
-        //flyttar fienden
+        /// <summary>
+        /// flyttar fienden
+        /// </summary>
         public void Move(int ww)
         {
             enemy.X += eSpeed;
@@ -66,7 +68,9 @@ namespace Game1
                 enemy.X = ww - enemy.Width;
             }
         }
-        // uppdaterar findens position
+        /// <summary>
+        /// uppdaterar findens position
+        /// </summary>
         public void UpdatePosition()
         {
             eTop.X = enemy.X;
@@ -87,7 +91,17 @@ namespace Game1
         public int FS
         {
             get { return fallSpeed; }
-            set { fallSpeed = value; }
+            set 
+            {
+                if (value < -28)
+                {
+                    fallSpeed = -28;
+                }
+                else
+                {
+                    fallSpeed = value;
+                }
+            }
         }
         public bool F
         {
