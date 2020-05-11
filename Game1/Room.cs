@@ -37,7 +37,7 @@ namespace Game1
         }
         public bool Next(Player p, List<Enemy> el, KeyboardState kstate)
         {
-            if (p.player.Intersects(door) && el.Count == 0)
+            if (p.P.Intersects(door) && el.Count == 0)
             {
                 e = true;
                 if (kstate.IsKeyDown(Keys.E))
@@ -62,8 +62,8 @@ namespace Game1
                 b *= 10;
                 a++;
             }
-            p.player.X = 0;
-            p.player.Y = ground.Y - p.player.Height;
+            p.RectangleStuff(0, p.P.Y, p.P.Width, p.P.Height);
+            p.RectangleStuff(p.P.X, ground.Y - p.P.Height, p.P.Width, p.P.Height);
             rlg.Clear();
             el.Clear();
             bl.Clear();

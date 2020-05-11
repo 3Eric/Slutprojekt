@@ -32,7 +32,7 @@ namespace Game1
                 {
                     p.DJ = false;
                     p.J = false;
-                    p.player.Y = r.Y - p.player.Height;
+                    p.RectangleStuff(p.P.X, r.Y - p.P.Height, p.P.Width, p.P.Height);
                     p.UpdatePosition(ww);
                     p.JS = 0;
                 }
@@ -40,23 +40,23 @@ namespace Game1
                 {
                     if (p.GB == false)
                     {
-                        p.player.Y = r.Y + r.Height;
+                        p.RectangleStuff(p.P.X, r.Y + r.Height, p.P.Width, p.P.Height);
                     }
                     else
                     {
-                        p.player.Y = r.Y + r.Height + ww / 26;
+                        p.RectangleStuff(p.P.X, r.Y + r.Height + ww / 26, p.P.Width, p.P.Height);
                     }
                     p.UpdatePosition(ww);
                     p.JS *= -1;
                 }
                 if (p.pRight.Intersects(r))
                 {
-                    p.player.X = r.X + r.Width;
+                    p.RectangleStuff(r.X + r.Width, p.P.Y, p.P.Width, p.P.Height);
                     p.UpdatePosition(ww);
                 }
                 if (p.pLeft.Intersects(r))
                 {
-                    p.player.X = r.X - p.player.Width;
+                    p.RectangleStuff(r.X - p.P.Width, p.P.Y, p.P.Width, p.P.Height);
                     p.UpdatePosition(ww);
                 }
                 // fiende
@@ -131,21 +131,21 @@ namespace Game1
                 }
             }
             //kollar ifall spelaren försöker lämna fönstret
-            if (p.player.X > ww - p.player.Width)
+            if (p.P.X > ww - p.P.Width)
             {
-                p.player.X = ww - p.player.Width;
+                p.RectangleStuff(ww - p.P.Width, p.P.Y, p.P.Width, p.P.Height);
             }
-            else if (p.player.X < 0)
+            else if (p.P.X < 0)
             {
-                p.player.X = 0;
+                p.RectangleStuff(0, p.P.Y, p.P.Width, p.P.Height);
             }
-            else if (p.player.Y > wh)
+            else if (p.P.Y > wh)
             {
                 p.HP -= 1;
                 p.sw.Start();
                 p.UpdateHealth(ww);
-                p.player.X = 0;
-                p.player.Y = wh - wh / 24 - p.player.Height;
+                p.RectangleStuff(0, p.P.Y, p.P.Width, p.P.Height);
+                p.RectangleStuff(p.P.X, wh - wh / 24 - p.P.Height, p.P.Width, p.P.Height);
                 p.JS = 0;
             }
             // kollar ifall något kolliderar med en låda
@@ -153,11 +153,11 @@ namespace Game1
             {
                 if (b.BP == true)
                 {
-                    b.box.X = p.player.X - (b.box.Width - p.player.Width) / 2;
-                    b.box.Y = p.player.Y - b.box.Height;
+                    b.box.X = p.P.X - (b.box.Width - p.P.Width) / 2;
+                    b.box.Y = p.P.Y - b.box.Height;
                 }
                 //kollar ifall spelaern står nära lådan för att kunna plocka upp den
-                if (p.player.Intersects(b.aura) && b.BP == false && b.BT == false)
+                if (p.P.Intersects(b.aura) && b.BP == false && b.BT == false)
                 {
                     b.E = true;
                 }
@@ -165,7 +165,7 @@ namespace Game1
                 {
                     b.E = false;
                 }
-                if (p.player.Intersects(b.aura) && kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && b.BP == false && b.BT == false)
+                if (p.P.Intersects(b.aura) && kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && b.BP == false && b.BT == false)
                 {
                     b.BP = true;
                     p.GB = true;
@@ -173,17 +173,17 @@ namespace Game1
                 }
                 else if (kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && b.BP == true)
                 {
-                    if (p.D == "R")
+                    if (p.D == 1)
                     {
-                        b.box.X = p.player.X + p.player.Width;
+                        b.box.X = p.P.X + p.P.Width;
                     }
                     else
                     {
-                        b.box.X = p.player.X - b.box.Width;
+                        b.box.X = p.P.X - b.box.Width;
                     }
                     b.BP = false;
                     p.GB = false;
-                    b.box.Y = p.player.Y + p.player.Height - b.box.Height;
+                    b.box.Y = p.P.Y + p.P.Height - b.box.Height;
                     b.UpdateAura();
                 }
                 // spelare
@@ -193,24 +193,18 @@ namespace Game1
                     {
                         p.DJ = false;
                         p.J = false;
-                        p.player.Y = b.box.Y - p.player.Height;
+                        p.RectangleStuff(p.P.X, b.box.Y - p.P.Height, p.P.Width, p.P.Height);
                         p.UpdatePosition(ww);
                         p.JS = 0;
                     }
-                    if (p.pTop.Intersects(b.box))
-                    {
-                        p.player.Y = b.box.Y + b.box.Height;
-                        p.UpdatePosition(ww);
-                        p.JS *= -1;
-                    }
                     if (p.pRight.Intersects(b.box))
                     {
-                        p.player.X = b.box.X + b.box.Width;
+                        p.RectangleStuff(b.box.X + b.box.Width, p.P.Y, p.P.Width, p.P.Height);
                         p.UpdatePosition(ww);
                     }
                     if (p.pLeft.Intersects(b.box))
                     {
-                        p.player.X = b.box.X - p.player.Width;
+                        p.RectangleStuff(b.box.X - p.P.Width, p.P.Y, p.P.Width, p.P.Height);
                         p.UpdatePosition(ww);
                     }
                 }
@@ -263,7 +257,7 @@ namespace Game1
             // kistor
             foreach (var c in cl)
             {
-                if (p.player.Intersects(c.chest) && el.Count == 0 && c.Open == false)
+                if (p.P.Intersects(c.chest) && el.Count == 0 && c.Open == false)
                 {
                     c.E = true;
                 }
@@ -271,7 +265,7 @@ namespace Game1
                 {
                     c.E = false;
                 }
-                if (p.player.Intersects(c.chest) && kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && c.Open == false)
+                if (p.P.Intersects(c.chest) && kstate.IsKeyDown(Keys.E) && oldstate.IsKeyUp(Keys.E) && c.Open == false)
                 {
                     c.Open = true;
                     ll.Add(new Loot(c.inside.X + c.inside.Width / 3, c.chest.Y, ww, c.Loot));
@@ -283,10 +277,18 @@ namespace Game1
                 // skått
                 for (int i = 0; i < pl.Count; i++)
                 {
-                    if (pl[i].bullet.Intersects(e.enemy))
+                    if (pl[i].bullet.Intersects(e.enemy) && pl[i].F == true)
                     {
                         e.Dead = true;
                         pl.RemoveAt(i);
+                    }
+                    // kollar ifall skått kolliderar med spelaren
+                    else if (pl[i].bullet.Intersects(p.P) && pl[i].F == false)
+                    {
+                        pl.RemoveAt(i);
+                        p.HP--;
+                        p.sw.Start();
+                        p.UpdateHealth(ww);
                     }
                 }
                 // spelare
@@ -295,29 +297,35 @@ namespace Game1
                     e.Dead = true;
                     p.JS = p.JP * 3 / 4;
                 }
-                else if (e.enemy.Intersects(p.player) && p.sw.ElapsedMilliseconds == 0)
+                else if (e.enemy.Intersects(p.P) && p.sw.ElapsedMilliseconds == 0)
                 {
                     p.HP--;
                     p.sw.Start();
                     p.UpdateHealth(ww);
                 }
+                // kollar ifall spelaren blir sedd av en fiende
+                if (e.sight.Intersects(p.P) && e.sw.ElapsedMilliseconds == 0)
+                {
+                    e.sw.Start();
+                    pl.Add(new Bullet(e.gun.X, e.gun.Y + 1, e.Speed, ww, wh, "e"));
+                }
             }
             // kollar ifall spelaren kolliderar med loot
             for (int i = 0; i < ll.Count; i++)
             {
-                if (p.player.Intersects(ll[i].drop) && p.HP < p.MHP && ll[i].T == "hp")
+                if (p.P.Intersects(ll[i].drop) && p.HP < p.MHP && ll[i].T == "hp")
                 {
                     p.HP++;
                     p.UpdateHealth(ww);
                     ll.RemoveAt(i);
                 }
-                else if (p.player.Intersects(ll[i].drop) && p.Ammo < p.MAmmo && ll[i].T == "ammo")
+                else if (p.P.Intersects(ll[i].drop) && p.Ammo < p.MAmmo && ll[i].T == "ammo")
                 {
                     p.Ammo++;
                     p.UpdateAmmo(ww);
                     ll.RemoveAt(i);
                 }
-                else if (p.player.Intersects(ll[i].drop) && (ll[i].T != "ammo" || ll[i].T != "hp"))
+                else if (p.P.Intersects(ll[i].drop) && ll[i].T != "ammo" && ll[i].T != "hp")
                 {
                     ll.RemoveAt(i);
                     p.StatUpgrade(ww);

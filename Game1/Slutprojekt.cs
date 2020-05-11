@@ -66,15 +66,30 @@ namespace Game1
             KeyboardState kstate = Keyboard.GetState();
             if (kstate.IsKeyDown(Keys.D))
             {
-                p.player.X += p.Speed;
+                p.RectangleStuff(p.P.X + p.Speed, p.P.Y, p.P.Width, p.P.Height);
                 p.UpdatePosition(ww);
-                p.D = "R";
+                p.D = 1;
             }
             if (kstate.IsKeyDown(Keys.A))
             {
-                p.player.X -= p.Speed;
+                p.RectangleStuff(p.P.X - p.Speed, p.P.Y, p.P.Width, p.P.Height);
                 p.UpdatePosition(ww);
-                p.D = "L";
+                p.D = -1;
+            }
+            if (kstate.IsKeyDown(Keys.S) && oldstate.IsKeyUp(Keys.S))
+            {
+                if (p.S == false)
+                {
+                    p.S = true;
+                    p.Speed /= 2;
+                }
+                else if (p.S == true)
+                {
+                    p.RectangleStuff(p.P.X, p.P.Y - p.P.Height, p.P.Width, p.P.Height);
+                    p.S = false;
+                    p.Speed *= 2;
+                }
+                p.UpdatePosition(ww);
             }
             if (kstate.IsKeyDown(Keys.Space) && p.J == false)
             {
@@ -95,19 +110,19 @@ namespace Game1
                     {
                         if (b.BP == true)
                         {
-                            if (p.D == "R")
+                            if (p.D > 0)
                             {
                                 b.BS = 10;
-                                b.box.X = p.player.X + p.player.Width;
+                                b.box.X = p.P.X + p.P.Width;
                             }
                             else
                             {
                                 b.BS = -10;
-                                b.box.X = p.player.X - b.box.Width;
+                                b.box.X = p.P.X - b.box.Width;
                             }
                             b.BP = false;
                             b.BT = true;
-                            b.box.Y = p.player.Y;
+                            b.box.Y = p.P.Y;
                         }
                     }
                 }
@@ -115,7 +130,7 @@ namespace Game1
                 {
                     p.Ammo--;
                     p.UpdateAmmo(ww);
-                    pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh));
+                    pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh, "p"));
                 }
             }
             if (kstate.IsKeyDown(Keys.B) && oldstate.IsKeyUp(Keys.B))
@@ -154,20 +169,9 @@ namespace Game1
             // spelaren faller
             if (p.J == true || p.F == true)
             {
-                p.player.Y -= p.JS;
+                p.RectangleStuff(p.P.X, p.P.Y - p.JS, p.P.Width, p.P.Height);
                 p.UpdatePosition(ww);
                 p.JS -= g;
-            }
-            // flyttar alla fiender
-            foreach (var e in el)
-            {
-                e.Move(ww);
-                if (e.F == true)
-                {
-                    e.enemy.Y -= e.FS;
-                    e.FS -= g;
-                }
-                e.UpdatePosition();
             }
             // flyttar alla lådor ifall dom kastas eller släpps
             foreach (var b in bl)
@@ -185,9 +189,10 @@ namespace Game1
             }
             // kollar ifall något kollidrerar
             c.Check(p, ref room, rlg, ref bl, ref cl, ref pl, ref el, ref ll, g, kstate, oldstate, ww, wh);
-            // kollar ifall en fiende har dött
+            // Uppdaterar fienderna
             for (int i = 0; i < el.Count; i++)
             {
+                // kollar ifall en fiende har dött
                 if (el[i].Dead == true)
                 {
                     if (el[i].GL == true)
@@ -195,6 +200,20 @@ namespace Game1
                         ll.Add(new Loot(el[i].enemy.X, el[i].enemy.Y, ww, el[i].Loot));
                     }
                     el.RemoveAt(i);
+                }
+                else
+                {
+                    el[i].Move(ww);
+                    if (el[i].F == true)
+                    {
+                        el[i].enemy.Y -= el[i].FS;
+                        el[i].FS -= g;
+                    }
+                    el[i].UpdatePosition();
+                    if (el[i].sw.ElapsedMilliseconds > 1000)
+                    {
+                        el[i].sw.Reset();
+                    }
                 }
             }
             foreach (var l in ll)
@@ -241,10 +260,11 @@ namespace Game1
             }
             // ritar spelaren
             spriteBatch.Draw(pixel, p.gun, Color.Black);
-            spriteBatch.Draw(pixel, p.player, Color.Purple);
+            spriteBatch.Draw(pixel, p.P, Color.Blue);
             // ritar fienden
             foreach (var e in el)
             {
+                spriteBatch.Draw(pixel, e.gun, Color.Black);
                 spriteBatch.Draw(pixel, e.enemy, Color.Red);
             }
             // ritar marken och plattformar
@@ -264,7 +284,7 @@ namespace Game1
             // ritar alla skått
             foreach (var p in pl)
             {
-                spriteBatch.Draw(pixel, p.bullet, Color.Purple);
+                spriteBatch.Draw(pixel, p.bullet, p.C);
             }
             // ritar spelarens liv
             foreach (var hp in p.hpl)
@@ -282,6 +302,14 @@ namespace Game1
                 spriteBatch.Draw(pixel, l.drop, l.C);
             }
             spriteBatch.DrawString(font, "R:" + room.RC, new Vector2(ww - font.LineSpacing * room.A, 0), Color.White);
+            //while (room.RC == 0)
+            //{
+                //spriteBatch.DrawString(font, "Move: A and D", new Vector2(300, 300), Color.White);
+                //spriteBatch.DrawString(font, "Jump/Double jump: Spacebar", new Vector2(350, 300), Color.White);
+                //spriteBatch.DrawString(font, "Sneak: S", new Vector2(400, 300), Color.White);
+                //spriteBatch.DrawString(font, "Interact: E", new Vector2(450, 300), Color.White);
+                //spriteBatch.DrawString(font, "Shoot/Throw: Enter", new Vector2(500, 300), Color.White);
+            //}
 
             spriteBatch.End();
 

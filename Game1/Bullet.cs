@@ -11,17 +11,29 @@ namespace Game1
     {
         public Rectangle bullet;
         int bulletSpeed;
+        bool friendly;
+        Color color;
         // skapar skåttet och anger des riktning
-        public Bullet(int X, int Y, string d, int ww, int wh)
+        public Bullet(int X, int Y, int d, int ww, int wh, string t)
         {
             bullet = new Rectangle(X, Y, ww / 80, wh / 96);
-            if (d == "R")
+            if (d > 0)
             {
                 bulletSpeed = ww / 80;
             }
             else
             {
                 bulletSpeed = - ww / 80;
+            }
+            if (t == "p")
+            {
+                friendly = true;
+                color = Color.Blue;
+            }
+            else
+            {
+                friendly = false;
+                color = Color.Red;
             }
         }
         /// <summary>
@@ -30,6 +42,14 @@ namespace Game1
         public void Update()
         {
             bullet.X += bulletSpeed;
+        }
+        public bool F
+        {
+            get { return friendly; }
+        }
+        public Color C
+        {
+            get { return color; }
         }
     }
 }

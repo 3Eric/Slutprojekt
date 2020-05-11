@@ -15,15 +15,18 @@ namespace Game1
         Random r = new Random();
         int rh;
         public Stopwatch sw = new Stopwatch();
-        public Rectangle player;
+        Rectangle player;
         public Rectangle pRight;
         public Rectangle pLeft;
         public Rectangle pTop;
         public Rectangle pBot;
         public Rectangle gun;
-        string pDirection;
+        int height;
+        int direction;
         int sp;
+        int baseSpeed;
         int pSpeed;
+        bool sneak;
         bool gotBox;
         bool fall;
         bool jump;
@@ -41,15 +44,17 @@ namespace Game1
         public Player(int ww, int wh)
         {
             WW = ww;
-            player = new Rectangle(0, wh - wh / 10 - wh / 5, ww / 40, wh / 10);
-            pRight = new Rectangle(player.X, player.Y, player.Width / 2, player.Height);
-            pLeft = new Rectangle(player.X + pRight.Width, player.Y, pRight.Width, player.Height);
+            height = wh / 10;
+            player = new Rectangle(0, wh - wh / 10 - wh / 5, ww / 40, height);
+            pRight = new Rectangle(player.X, player.Y, player.Width / 2, height);
+            pLeft = new Rectangle(player.X + pRight.Width, player.Y, pRight.Width, height);
             pTop = new Rectangle(player.X, player.Y - 1, player.Width, 1);
-            pBot = new Rectangle(player.X, player.Y + player.Height - wh / 60 + 1, player.Width, wh / 60);
+            pBot = new Rectangle(player.X, player.Y + height - wh / 60 + 1, player.Width, wh / 60);
             gun = new Rectangle(player.X + player.Width, player.Y + player.Width, ww / 80, wh / 60);
-            pDirection = "R";
+            direction = 1;
             sp = 100;
-            pSpeed = ww / 160;
+            baseSpeed = ww / 160;
+            pSpeed = baseSpeed;
             jumpS = 0;
             jumpP = ww / 53;
             jump = false;
@@ -67,6 +72,18 @@ namespace Game1
         /// </summary>
         public void UpdatePosition(int ww)
         {
+            if (sneak == true)
+            {
+                player.Height = height / 2;
+                pRight.Height = player.Height;
+                pLeft.Height = player.Height;
+            }
+            else
+            {
+                player.Height = height;
+                pRight.Height = player.Height;
+                pLeft.Height = player.Height;
+            }
             pRight.X = player.X;
             pLeft.X = player.X + pRight.Width;
             pTop.X = player.X;
@@ -82,8 +99,8 @@ namespace Game1
                 pTop.Y = player.Y - 1;
             }
             pBot.Y = player.Y + player.Height;
-            gun.Y = player.Y + player.Width;
-            if (pDirection == "R")
+            gun.Y = player.Y + player.Height / 3;
+            if (direction > 0)
             {
                 gun.X = player.X + player.Width;
             }
@@ -116,7 +133,14 @@ namespace Game1
         }
         public void StatUpgrade(int ww)
         {
-            rh = r.Next(3);
+            if (pSpeed >= ww / 42)
+            {
+                rh = r.Next(2);
+            }
+            else
+            {
+                rh = r.Next(3);
+            }
             if (rh == 0)
             {
                 mhp++;
@@ -132,10 +156,37 @@ namespace Game1
             else if (rh == 2)
             {
                 sp += 10;
-                pSpeed = pSpeed * sp / 100;
+                pSpeed = baseSpeed * sp / 100;
+                if (pSpeed >= ww / 42)
+                {
+                    pSpeed = ww / 42;
+                }
+            }
+        }
+        /// <summary>
+        /// Ändrar x, y, bredd och höjd värden på rektangeln player
+        /// </summary>
+        public void RectangleStuff (int x, int y, int w, int h)
+        {
+            player.X = x;
+            player.Y = y;
+            player.Width = w;
+            player.Height = h;
+            if (player.Height > height)
+            {
+                player.Height = height;
+            }
+            else if (player.Height < height / 2)
+            {
+                player.Height = height / 2;
             }
         }
         //kunna hämta olika värden från spelaren
+        public Rectangle P
+        {
+            get { return player; }
+            set { player = value; }
+        }
         public int Speed
         {
             get { return pSpeed; }
@@ -151,15 +202,20 @@ namespace Game1
                 }
             }
         }
-        public string D
+        public int D
         {
-            get { return pDirection; }
-            set { pDirection = value; }
+            get { return direction; }
+            set { direction = value; }
         }
         public bool GB
         {
             get { return gotBox; }
             set { gotBox = value; }
+        }
+        public bool S
+        {
+            get { return sneak; }
+            set { sneak = value; }
         }
         public int JS
         {

@@ -36,8 +36,8 @@ namespace Game1
             //kollar ifall lådan är upplockad av spelaren
             if (pickedUp == true)
             {
-                box.X = p.player.X - (box.Width - p.player.Width) / 2;
-                box.Y = p.player.Y - box.Height;
+                box.X = p.P.X - (box.Width - p.P.Width) / 2;
+                box.Y = p.P.Y - box.Height;
             }
             else if (pickedUp == false && thrown == true)
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +11,14 @@ namespace Game1
     class Enemy
     {
         Random r = new Random();
+        public Stopwatch sw = new Stopwatch();
         public Rectangle enemy;
         public Rectangle eRight;
         public Rectangle eLeft;
         public Rectangle eTop;
         public Rectangle eBot;
+        public Rectangle gun;
+        public Rectangle sight;
         int eSpeed;
         int fallSpeed;
         bool fall;
@@ -29,6 +33,8 @@ namespace Game1
             eLeft = new Rectangle(enemy.X + eRight.Width, enemy.Y, eRight.Width, enemy.Height);
             eTop = new Rectangle(enemy.X, enemy.Y - 1, enemy.Width, enemy.Height / 3);
             eBot = new Rectangle(enemy.X, enemy.Y + enemy.Height + 1, enemy.Width, 1);
+            gun = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 80, wh / 60);
+            sight = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 3, wh / 120);
             eSpeed = - ww / 266;
             fall = true;
             dead = false;
@@ -81,6 +87,18 @@ namespace Game1
             eLeft.Y = enemy.Y;
             eBot.X = enemy.X;
             eBot.Y = enemy.Y + enemy.Height + 1;
+            gun.Y = enemy.Y + enemy.Height / 3;
+            sight.Y = gun.Y;
+            if (eSpeed < 0)
+            {
+                gun.X = enemy.X - gun.Width;
+                sight.X = enemy.X - sight.Width;
+            }
+            else
+            {
+                gun.X = enemy.X + enemy.Width;
+                sight.X = enemy.X + enemy.Width;
+            }
         }
         // kunna hämta olika färden från fienden
         public int Speed
