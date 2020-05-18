@@ -69,82 +69,180 @@ namespace Game1
             bl.Clear();
             cl.Clear();
             ll.Clear();
-            //rh = r.Next(3);
-            rh = 1;
-            if (rh == 0)
+            rh = r.Next(2);
+            if (roomCounter % 5 == 0 || rh > 0)
             {
-                rlg.Add(ground);
-                rlg.Add(new Rectangle(0, ground.Y - gap * 3, m, t));
-                bl.Add(new Box(m - ww / 26, ground.Y - gap * 3 - ww / 26, ww));
-                el.Add(new Enemy(0, ground.Y - gap * 3 - wh / 10, ww, wh));
-                rlg.Add(new Rectangle(ww - m, ground.Y - gap * 3, m, t));
-                bl.Add(new Box(ww - m, ground.Y - gap * 3 - ww / 26, ww));
-                el.Add(new Enemy(ww - ww / 40, ground.Y - gap * 3 - wh / 10, ww, wh));
-                rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap, l, t));
-                bl.Add(new Box(ww / 2 - (l) / 2, ground.Y - gap - ww / 26, ww));
-                bl.Add(new Box(ww / 2 - (l) / 2 + l - ww / 26, ground.Y - gap - ww / 26, ww));
-                rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
-                rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
-                rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 2, s, t));
-                rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 4, m, t));
-                bl.Add(new Box(ww / 2 - (m) / 2, ground.Y - gap * 4 - ww / 26, ww));
-                bl.Add(new Box(ww / 2 - (m) / 2 + m - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
+                cl.Add(new Chest(ww / 2 - ww / 20 / 2, Ground.Y - gap * 2 - ww / 26, ww));
             }
-            else if(rh == 1)
+            if (roomCounter == 10)
             {
                 rlg.Add(ground);
-                rh = r.Next(2);
-                if(rh == 0)
+                rlg.Add(new Rectangle(s, ground.Y - gap, s, t));
+                bl.Add(new Box(m - ww / 26, ground.Y - gap - ww / 26, ww));
+                rlg.Add(new Rectangle(l - s, ground.Y - gap, s, t));
+                bl.Add(new Box(l - ww / 26, ground.Y - gap - ww / 26, ww));
+                rlg.Add(new Rectangle(ww - m - s, ground.Y - gap, s, t));
+                bl.Add(new Box(l + m - ww / 26, ground.Y - gap - ww / 26, ww));
+                rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
+                rlg.Add(new Rectangle(0, ground.Y - gap * 2, l, t));
+                rlg.Add(new Rectangle(l, ground.Y - gap * 2, m, t));
+                rlg.Add(new Rectangle(0, ground.Y - gap * 3, s, t));
+                rlg.Add(new Rectangle(ww - l, ground.Y - gap * 4, l, t));
+                rlg.Add(new Rectangle(m, ground.Y - gap * 4, m, t));
+                rlg.Add(new Rectangle(ww - s, ground.Y - gap * 5, s, t));
+                cl.Add(new Chest(ww - ww / 20, Ground.Y - gap * 5 - ww / 26, ww));
+                for (int i = 0; i < 11; i++)
                 {
-                    rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap, l, t));
-                    rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
-                    rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
-                }
-                else
-                {
-                    rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap, s, t));
-                }
-                rh = r.Next(2);
-                if (rh == 0)
-                {
-                    rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 2, s, t));
-                }
-                else
-                {
-                    rlg.Add(new Rectangle(ww / 4 - (m) / 2, ground.Y - gap * 2, m, t));
-                    rlg.Add(new Rectangle(ww * 3 / 4 - (m) / 2, ground.Y - gap * 2, m, t));
-                }
-                rh = r.Next(2);
-                if (rh == 0)
-                {
-                    rlg.Add(new Rectangle(0, ground.Y - gap * 3, m, t));
-                    rlg.Add(new Rectangle(ww - m, ground.Y - gap * 3, m, t));
-                }
-                else
-                {
-                    rlg.Add(new Rectangle(0, ground.Y - gap * 3, s, t));
-                    rlg.Add(new Rectangle(ww - s, ground.Y - gap * 3, m, t));
+                    el.Add(new Enemy(ww - i * 2 * ww / 25, ground.Y - gap * 4 - wh / 10, ww, wh));
                 }
             }
             else
             {
-                rlg.Add(new Rectangle(0, ground.Y, m, t));
-                rlg.Add(new Rectangle(0 + m + s, ground.Y, m, t));
-                bl.Add(new Box(m - ww / 26, ground.Y - ww / 26, ww));
-                rlg.Add(new Rectangle(0 + m * 2 + s * 2, ground.Y, m, t));
-                bl.Add(new Box(ww - m, ground.Y - ww / 26, ww));
-                rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap, s, t));
-                el.Add(new Enemy(ww - ww / 40, ground.Y - gap * 3 - wh / 10, ww, wh));
-                rlg.Add(new Rectangle(ww / 4 - (m) / 2, ground.Y - gap * 2, m, t));
-                bl.Add(new Box(m + s - ww / 26, ground.Y - gap * 2 - ww / 26, ww));
-                rlg.Add(new Rectangle(ww * 3 / 4 - (m) / 2, ground.Y - gap * 2, m, t));
-                bl.Add(new Box(ww - m - s, ground.Y - gap * 2 - ww / 26, ww));
-                rlg.Add(new Rectangle(0, ground.Y - gap * 3, s, t));
-                el.Add(new Enemy(0, ground.Y - gap * 3 - wh / 10, ww, wh));
-                rlg.Add(new Rectangle(ww - s, ground.Y - gap * 3, m, t));
-                rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 4, l, t));
-                bl.Add(new Box(ww / 2 - (l) / 2, ground.Y - gap * 4 - ww / 26, ww));
-                bl.Add(new Box(ww / 2 - (l) / 2 + l - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
+                rh = r.Next(3);
+                // ground
+                if (rh == 0)
+                {
+                    rlg.Add(ground);
+                    rh = r.Next(2);
+                    if (rh == 0)
+                    {
+                        rlg.Add(new Rectangle(0, ground.Y - gap * 3, m, t));
+                        bl.Add(new Box(m - ww / 26, ground.Y - gap * 3 - ww / 26, ww));
+                        el.Add(new Enemy(0, ground.Y - gap * 3 - wh / 10, ww, wh));
+                        rlg.Add(new Rectangle(ww - m, ground.Y - gap * 3, m, t));
+                        bl.Add(new Box(ww - m, ground.Y - gap * 3 - ww / 26, ww));
+                        el.Add(new Enemy(ww - ww / 40, ground.Y - gap * 3 - wh / 10, ww, wh));
+                        rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap, l, t));
+                        bl.Add(new Box(ww / 2 - (l) / 2, ground.Y - gap - ww / 26, ww));
+                        bl.Add(new Box(ww / 2 - (l) / 2 + l - ww / 26, ground.Y - gap - ww / 26, ww));
+                        rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
+                        rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
+                        rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 2, s, t));
+                        rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 4, m, t));
+                        bl.Add(new Box(ww / 2 - (m) / 2, ground.Y - gap * 4 - ww / 26, ww));
+                        bl.Add(new Box(ww / 2 - (m) / 2 + m - ww / 26, ground.Y - gap * 4 - ww / 26, ww));
+                    }
+                    else
+                    {
+                        rh = r.Next(2);
+                        if (rh == 0)
+                        {
+                            rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
+                            rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
+                            rh = r.Next(2);
+                            if (rh == 0)
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap, l, t));
+                            }
+                            else
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap, m, t));
+                            }
+                            rh = r.Next(2);
+                            if (rh == 0)
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 2, s, t));
+                            }
+                            else
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 2, m, t));
+                            }
+                        }
+                        else
+                        {
+                            rlg.Add(new Rectangle(0, ground.Y - gap, m, t));
+                            rlg.Add(new Rectangle(ww - m, ground.Y - gap, m, t));
+                            rh = r.Next(2);
+                            if (rh == 0)
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap, s, t));
+                            }
+                            rh = r.Next(2);
+                            if (rh == 0)
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 2, m, t));
+                            }
+                            else
+                            {
+                                rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 2, l, t));
+                            }
+                        }
+                    }
+                }
+                // two holes
+                else if (rh == 1)
+                {
+                    rlg.Add(new Rectangle(0, ground.Y, m, t));
+                    rlg.Add(new Rectangle(0 + m + s, ground.Y, m, t));
+                    rlg.Add(new Rectangle(0 + m * 2 + s * 2, ground.Y, m, t));
+                    rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
+                    rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
+                    rlg.Add(new Rectangle(0, ground.Y - gap * 3, m, t));
+                    rlg.Add(new Rectangle(ww - m, ground.Y - gap * 3, m, t));
+                    rh = r.Next(2);
+                    if (rh == 0)
+                    {
+                        rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 2, l, t));
+                        rh = r.Next(2);
+                        if (rh == 0)
+                        {
+                            rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 4, m, t));
+                        }
+                        else
+                        {
+                            rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 4, s, t));
+                        }
+                    }
+                    else
+                    {
+                        rlg.Add(new Rectangle(m, ground.Y - gap * 2, s, t));
+                        rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap * 2, s, t));
+                        rlg.Add(new Rectangle(ww - m - s, ground.Y - gap * 2, s, t));
+                        rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 4, m, t));
+                    }
+
+                }
+                // one hole
+                else
+                {
+                    rlg.Add(new Rectangle(0, ground.Y, m, t));
+                    rlg.Add(new Rectangle(m, ground.Y, s, t));
+                    rlg.Add(new Rectangle(ww - m, ground.Y, m, t));
+                    rlg.Add(new Rectangle(ww - m - s, ground.Y, s, t));
+                    rlg.Add(new Rectangle(s, ground.Y - gap * 4, m, t));
+                    rlg.Add(new Rectangle(ww - m - s, ground.Y - gap * 4, m, t));
+                    rh = r.Next(2);
+                    if (rh == 0)
+                    {
+                        rlg.Add(new Rectangle(0, ground.Y - gap, s, t));
+                        rlg.Add(new Rectangle(ww - s, ground.Y - gap, s, t));
+                    }
+                    else
+                    {
+                        rlg.Add(new Rectangle(0, ground.Y - gap, m, t));
+                        rlg.Add(new Rectangle(ww - m, ground.Y - gap, m, t));
+                        rh = r.Next(2);
+                        if (rh == 0)
+                        {
+                            rlg.Add(new Rectangle(0, ground.Y - gap * 3, s, t));
+                            rlg.Add(new Rectangle(ww - s, ground.Y - gap * 3, s, t));
+                        }
+                    }
+                    rh = r.Next(2);
+                    if (rh == 0)
+                    {
+                        rlg.Add(new Rectangle(ww / 2 - (s) / 2, ground.Y - gap, s, t));
+                    }
+                    rh = r.Next(2);
+                    if (rh == 0)
+                    {
+                        rlg.Add(new Rectangle(ww / 2 - (l) / 2, ground.Y - gap * 2, l, t));
+                    }
+                    else
+                    {
+                        rlg.Add(new Rectangle(ww / 2 - (m) / 2, ground.Y - gap * 2, m, t));
+                    }
+                }
             }
         }
         public Rectangle Ground

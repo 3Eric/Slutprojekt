@@ -235,6 +235,16 @@ namespace Game1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+
+            if (room.RC == 0)
+            {
+                spriteBatch.DrawString(font, "Move: A and D", new Vector2(300, 100), Color.White);
+                spriteBatch.DrawString(font, "Jump/Double jump: Spacebar", new Vector2(300, 150), Color.White);
+                spriteBatch.DrawString(font, "Sneak: S", new Vector2(300, 200), Color.White);
+                spriteBatch.DrawString(font, "Interact: E", new Vector2(300, 250), Color.White);
+                spriteBatch.DrawString(font, "Shoot/Throw: Enter", new Vector2(300, 300), Color.White);
+            }
+
             if (el.Count == 0)
             {
                 spriteBatch.Draw(pixel, room.Door, Color.Yellow);
@@ -302,14 +312,6 @@ namespace Game1
                 spriteBatch.Draw(pixel, l.drop, l.C);
             }
             spriteBatch.DrawString(font, "R:" + room.RC, new Vector2(ww - font.LineSpacing * room.A, 0), Color.White);
-            //while (room.RC == 0)
-            //{
-                //spriteBatch.DrawString(font, "Move: A and D", new Vector2(300, 300), Color.White);
-                //spriteBatch.DrawString(font, "Jump/Double jump: Spacebar", new Vector2(350, 300), Color.White);
-                //spriteBatch.DrawString(font, "Sneak: S", new Vector2(400, 300), Color.White);
-                //spriteBatch.DrawString(font, "Interact: E", new Vector2(450, 300), Color.White);
-                //spriteBatch.DrawString(font, "Shoot/Throw: Enter", new Vector2(500, 300), Color.White);
-            //}
 
             spriteBatch.End();
 

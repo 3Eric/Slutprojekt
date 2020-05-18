@@ -309,6 +309,11 @@ namespace Game1
                     e.sw.Start();
                     pl.Add(new Bullet(e.gun.X, e.gun.Y + 1, e.Speed, ww, wh, "e"));
                 }
+                // kollar ifall fiender lämnar fönstret
+                if (e.enemy.Y > wh)
+                {
+                    e.Dead = true;
+                }
             }
             // kollar ifall spelaren kolliderar med loot
             for (int i = 0; i < ll.Count; i++)
