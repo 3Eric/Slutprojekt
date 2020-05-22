@@ -279,5 +279,14 @@ namespace Game1
             get { return ammo; }
             set { ammo = value; }
         }
+        public int BS
+        {
+            get { return baseSpeed; }
+        }
+        public int SP
+        {
+            get { return sp; }
+            set { sp = value; }
+        }
     }
 }

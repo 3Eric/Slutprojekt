@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace Game1
@@ -20,9 +21,12 @@ namespace Game1
         Collision c = new Collision();
         Room room;
         Player p;
+        bool end;
         int g = 1;
         int ww;
         int wh;
+        int rh;
+        Random r = new Random();
 
         KeyboardState oldstate;
 
@@ -64,74 +68,168 @@ namespace Game1
 
             // TODO: Add your update logic here
             KeyboardState kstate = Keyboard.GetState();
-            if (kstate.IsKeyDown(Keys.D))
+            if (end == false)
             {
-                p.RectangleStuff(p.P.X + p.Speed, p.P.Y, p.P.Width, p.P.Height);
-                p.UpdatePosition(ww);
-                p.D = 1;
-            }
-            if (kstate.IsKeyDown(Keys.A))
-            {
-                p.RectangleStuff(p.P.X - p.Speed, p.P.Y, p.P.Width, p.P.Height);
-                p.UpdatePosition(ww);
-                p.D = -1;
-            }
-            if (kstate.IsKeyDown(Keys.S) && oldstate.IsKeyUp(Keys.S))
-            {
-                if (p.S == false)
+                if (kstate.IsKeyDown(Keys.D))
                 {
-                    p.S = true;
-                    p.Speed /= 2;
+                    p.RectangleStuff(p.P.X + p.Speed, p.P.Y, p.P.Width, p.P.Height);
+                    p.UpdatePosition(ww);
+                    p.D = 1;
                 }
-                else if (p.S == true)
+                if (kstate.IsKeyDown(Keys.A))
                 {
-                    p.RectangleStuff(p.P.X, p.P.Y - p.P.Height, p.P.Width, p.P.Height);
-                    p.S = false;
-                    p.Speed *= 2;
+                    p.RectangleStuff(p.P.X - p.Speed, p.P.Y, p.P.Width, p.P.Height);
+                    p.UpdatePosition(ww);
+                    p.D = -1;
                 }
-                p.UpdatePosition(ww);
-            }
-            if (kstate.IsKeyDown(Keys.Space) && p.J == false)
-            {
-                p.J = true;
-                p.JS = p.JP;
-            }
-            else if (kstate.IsKeyDown(Keys.Space) && p.J == true && p.DJ == false && oldstate.IsKeyUp(Keys.Space))
-            {
-                p.DJ = true;
-                p.JS = p.JP;
-            }
-            if (kstate.IsKeyDown(Keys.Enter) && oldstate.IsKeyUp(Keys.Enter))
-            {
-                if (p.GB == true)
+                if (kstate.IsKeyDown(Keys.S) && oldstate.IsKeyUp(Keys.S))
                 {
-                    p.GB = false;
-                    foreach (var b in bl)
+                    if (p.S == false)
                     {
-                        if (b.BP == true)
+                        p.S = true;
+                        p.Speed /= 2;
+                    }
+                    else if (p.S == true)
+                    {
+                        p.RectangleStuff(p.P.X, p.P.Y - p.P.Height, p.P.Width, p.P.Height);
+                        p.S = false;
+                        p.Speed *= 2;
+                    }
+                    p.UpdatePosition(ww);
+                }
+                if (kstate.IsKeyDown(Keys.Space) && p.J == false)
+                {
+                    p.J = true;
+                    p.JS = p.JP;
+                }
+                else if (kstate.IsKeyDown(Keys.Space) && p.J == true && p.DJ == false && oldstate.IsKeyUp(Keys.Space))
+                {
+                    p.DJ = true;
+                    p.JS = p.JP;
+                }
+                if (kstate.IsKeyDown(Keys.Enter) && oldstate.IsKeyUp(Keys.Enter))
+                {
+                    if (p.GB == true)
+                    {
+                        p.GB = false;
+                        foreach (var b in bl)
                         {
-                            if (p.D > 0)
+                            if (b.BP == true)
                             {
-                                b.BS = 10;
-                                b.box.X = p.P.X + p.P.Width;
+                                if (p.D > 0)
+                                {
+                                    b.BS = 10;
+                                    b.box.X = p.P.X + p.P.Width;
+                                }
+                                else
+                                {
+                                    b.BS = -10;
+                                    b.box.X = p.P.X - b.box.Width;
+                                }
+                                b.BP = false;
+                                b.BT = true;
+                                b.box.Y = p.P.Y;
+                            }
+                        }
+                    }
+                    else if (p.Ammo > 0)
+                    {
+                        p.Ammo--;
+                        p.UpdateAmmo(ww);
+                        pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh, "p"));
+                    }
+                }
+                // spelaren faller
+                if (p.J == true || p.F == true)
+                {
+                    p.RectangleStuff(p.P.X, p.P.Y - p.JS, p.P.Width, p.P.Height);
+                    p.UpdatePosition(ww);
+                    p.JS -= g;
+                }
+                // flyttar alla lådor ifall dom kastas eller släpps
+                foreach (var b in bl)
+                {
+                    b.Update(p, g);
+                }
+                // gör så att skåtten rör sig
+                foreach (var p in pl)
+                {
+                    p.Update();
+                }
+                if (room.Next(p, el, kstate) == true)
+                {
+                    room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
+                }
+                // kollar ifall något kollidrerar
+                c.Check(p, ref room, rlg, ref bl, ref cl, ref pl, ref el, ref ll, g, kstate, oldstate, ww, wh);
+                // Uppdaterar fienderna
+                for (int i = 0; i < el.Count; i++)
+                {
+                    // kollar ifall en fiende har dött
+                    if (el[i].Dead == true)
+                    {
+                        rh = r.Next(10);
+                        if (rh == 0)
+                        {
+                            rh = r.Next(2);
+                            if (rh == 0)
+                            {
+                                ll.Add(new Loot(el[i].enemy.X, el[i].enemy.Y, ww, "ammo"));
                             }
                             else
                             {
-                                b.BS = -10;
-                                b.box.X = p.P.X - b.box.Width;
+                                ll.Add(new Loot(el[i].enemy.X, el[i].enemy.Y, ww, "hp"));
                             }
-                            b.BP = false;
-                            b.BT = true;
-                            b.box.Y = p.P.Y;
+                        }
+                        el.RemoveAt(i);
+                    }
+                    else
+                    {
+                        el[i].Move(ww);
+                        if (el[i].F == true)
+                        {
+                            el[i].enemy.Y -= el[i].FS;
+                            el[i].FS -= g;
+                        }
+                        el[i].UpdatePosition();
+                        if (el[i].sw.ElapsedMilliseconds > 1000)
+                        {
+                            el[i].sw.Reset();
                         }
                     }
                 }
-                else if (p.Ammo > 0)
+                foreach (var l in ll)
                 {
-                    p.Ammo--;
-                    p.UpdateAmmo(ww);
-                    pl.Add(new Bullet(p.gun.X, p.gun.Y + 1, p.D, ww, wh, "p"));
+                    l.Update(g);
                 }
+                // Gör så att spelaren kan ta skada igen
+                if (p.sw.ElapsedMilliseconds > 500)
+                {
+                    p.sw.Reset();
+                }
+                // kollar ifall spelaren har förlorat
+                if (p.HP < 1)
+                {
+                    end = true;
+                }
+            }
+            else if (end == true && kstate.IsKeyDown(Keys.Space))
+            {
+                end = false;
+                p.MHP = 3;
+                p.HP = p.MHP;
+                p.MAmmo = 5;
+                p.Ammo = p.MAmmo;
+                p.UpdateHealth(ww);
+                p.UpdateAmmo(ww);
+                p.Speed = p.BS;
+                p.SP = 100;
+                el.Clear();
+                bl.Clear();
+                cl.Clear();
+                ll.Clear();
+                room.RC = -1;
+                room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
             }
             if (kstate.IsKeyDown(Keys.B) && oldstate.IsKeyUp(Keys.B))
             {
@@ -155,76 +253,13 @@ namespace Game1
                 bl.Clear();
                 cl.Clear();
                 ll.Clear();
+                end = false;
             }
             else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
             {
                 room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
             }
-            else if (kstate.IsKeyDown(Keys.L) && oldstate.IsKeyUp(Keys.L))
-            {
-                ll.Add(new Loot(0, 0, ww, "hp"));
-            }
 
-
-            // spelaren faller
-            if (p.J == true || p.F == true)
-            {
-                p.RectangleStuff(p.P.X, p.P.Y - p.JS, p.P.Width, p.P.Height);
-                p.UpdatePosition(ww);
-                p.JS -= g;
-            }
-            // flyttar alla lådor ifall dom kastas eller släpps
-            foreach (var b in bl)
-            {
-                b.Update(p, g);
-            }
-            // gör så att skåtten rör sig
-            foreach (var p in pl)
-            {
-                p.Update();
-            }
-            if (room.Next(p, el, kstate) == true)
-            {
-                room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
-            }
-            // kollar ifall något kollidrerar
-            c.Check(p, ref room, rlg, ref bl, ref cl, ref pl, ref el, ref ll, g, kstate, oldstate, ww, wh);
-            // Uppdaterar fienderna
-            for (int i = 0; i < el.Count; i++)
-            {
-                // kollar ifall en fiende har dött
-                if (el[i].Dead == true)
-                {
-                    if (el[i].GL == true)
-                    {
-                        ll.Add(new Loot(el[i].enemy.X, el[i].enemy.Y, ww, el[i].Loot));
-                    }
-                    el.RemoveAt(i);
-                }
-                else
-                {
-                    el[i].Move(ww);
-                    if (el[i].F == true)
-                    {
-                        el[i].enemy.Y -= el[i].FS;
-                        el[i].FS -= g;
-                    }
-                    el[i].UpdatePosition();
-                    if (el[i].sw.ElapsedMilliseconds > 1000)
-                    {
-                        el[i].sw.Reset();
-                    }
-                }
-            }
-            foreach (var l in ll)
-            {
-                l.Update(g);
-            }
-            // Gör så att spelaren kan ta skada igen
-            if (p.sw.ElapsedMilliseconds > 500)
-            {
-                p.sw.Reset();
-            }
             oldstate = Keyboard.GetState();
             base.Update(gameTime);
         }
@@ -238,11 +273,12 @@ namespace Game1
 
             if (room.RC == 0)
             {
-                spriteBatch.DrawString(font, "Move: A and D", new Vector2(300, 100), Color.White);
-                spriteBatch.DrawString(font, "Jump/Double jump: Spacebar", new Vector2(300, 150), Color.White);
-                spriteBatch.DrawString(font, "Sneak: S", new Vector2(300, 200), Color.White);
-                spriteBatch.DrawString(font, "Interact: E", new Vector2(300, 250), Color.White);
-                spriteBatch.DrawString(font, "Shoot/Throw: Enter", new Vector2(300, 300), Color.White);
+                spriteBatch.DrawString(font, "Move: A and D", new Vector2(ww / 3, wh / 2 - font.LineSpacing * 2), Color.White);
+                spriteBatch.DrawString(font, "Jump/Double jump: Spacebar", new Vector2(ww / 3, wh / 2 - font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, "Sneak: S", new Vector2(ww / 3, wh / 2), Color.White);
+                spriteBatch.DrawString(font, "Interact: E", new Vector2(ww / 3, wh / 2 + font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, "Shoot/Throw: Enter", new Vector2(ww / 3, wh / 2 + font.LineSpacing * 2), Color.White);
+                spriteBatch.DrawString(font, "Quit: Esc", new Vector2(ww / 3, wh / 2 + font.LineSpacing * 3), Color.White);
             }
 
             if (el.Count == 0)
@@ -312,6 +348,15 @@ namespace Game1
                 spriteBatch.Draw(pixel, l.drop, l.C);
             }
             spriteBatch.DrawString(font, "R:" + room.RC, new Vector2(ww - font.LineSpacing * room.A, 0), Color.White);
+
+            if (end == true)
+            {
+                spriteBatch.Draw(pixel, new Rectangle(ww / 8 * 3, wh / 8 * 3, ww / 4, wh / 4), Color.Black);
+                spriteBatch.DrawString(font, "THE END", new Vector2(ww / 2 - font.LineSpacing * 2, wh / 2 - font.LineSpacing * 2), Color.White);
+                spriteBatch.DrawString(font, "Score:" + room.RC, new Vector2(ww / 2 - font.LineSpacing * 2, wh / 2), Color.White);
+                spriteBatch.DrawString(font, "Press Space To Restart", new Vector2(ww / 2 - font.LineSpacing * 9 / 2, wh / 2 + font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, "Press Esc To Quit", new Vector2(ww / 2 - font.LineSpacing * 7 / 2, wh / 2 + font.LineSpacing * 2), Color.White);
+            }
 
             spriteBatch.End();
 

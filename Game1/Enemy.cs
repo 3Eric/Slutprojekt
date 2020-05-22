@@ -33,11 +33,15 @@ namespace Game1
             eLeft = new Rectangle(enemy.X + eRight.Width, enemy.Y, eRight.Width, enemy.Height);
             eTop = new Rectangle(enemy.X, enemy.Y - 1, enemy.Width, enemy.Height / 3);
             eBot = new Rectangle(enemy.X, enemy.Y + enemy.Height + 1, enemy.Width, 1);
-            gun = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 80, wh / 60);
-            sight = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 3, wh / 120);
             eSpeed = - ww / 266;
             fall = true;
             dead = false;
+            lnr = r.Next(2);
+            if (lnr == 0)
+            {
+                gun = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 80, wh / 60);
+                sight = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 3, wh / 120);
+            }
             lnr = r.Next(10);
             if (lnr == 0)
             {

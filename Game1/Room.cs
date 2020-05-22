@@ -70,11 +70,15 @@ namespace Game1
             cl.Clear();
             ll.Clear();
             rh = r.Next(2);
-            if (roomCounter % 5 == 0 || rh > 0)
+            if ((roomCounter % 5 == 0 || rh > 0) && roomCounter > 0)
             {
                 cl.Add(new Chest(ww / 2 - ww / 20 / 2, Ground.Y - gap * 2 - ww / 26, ww));
             }
-            if (roomCounter == 10)
+            if (roomCounter == 0)
+            {
+                rlg.Add(ground);
+            }
+            else if (roomCounter == 10)
             {
                 rlg.Add(ground);
                 rlg.Add(new Rectangle(s, ground.Y - gap, s, t));
