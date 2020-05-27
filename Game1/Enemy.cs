@@ -21,11 +21,11 @@ namespace Game1
         public Rectangle sight;
         int eSpeed;
         int fallSpeed;
+        int jumpP;
         bool fall;
         bool dead;
-        bool gotLoot;
-        string loot;
-        int lnr;
+        int rh;
+        bool gg;
         public Enemy(int X, int Y, int ww, int wh)
         {
             enemy = new Rectangle(X, Y, ww / 25, wh / 10);
@@ -33,32 +33,20 @@ namespace Game1
             eLeft = new Rectangle(enemy.X + eRight.Width, enemy.Y, eRight.Width, enemy.Height);
             eTop = new Rectangle(enemy.X, enemy.Y - 1, enemy.Width, enemy.Height / 3);
             eBot = new Rectangle(enemy.X, enemy.Y + enemy.Height + 1, enemy.Width, 1);
+            sight = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 3, wh / 120);
             eSpeed = - ww / 266;
+            jumpP = ww / 53;
             fall = true;
             dead = false;
-            lnr = r.Next(2);
-            if (lnr == 0)
+            rh = r.Next(2);
+            if (rh == 0)
             {
                 gun = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 80, wh / 60);
-                sight = new Rectangle(enemy.X + enemy.Width, enemy.Y + enemy.Height / 3, ww / 3, wh / 120);
-            }
-            lnr = r.Next(10);
-            if (lnr == 0)
-            {
-                gotLoot = true;
-                lnr = r.Next(2);
-                if (lnr == 0)
-                {
-                    loot = "ammo";
-                }
-                else
-                {
-                    loot = "hp";
-                }
+                gg = true;
             }
             else
             {
-                gotLoot = false;
+                gg = false;
             }
         }
         /// <summary>
@@ -125,6 +113,11 @@ namespace Game1
                 }
             }
         }
+        public int JP
+        {
+            get { return jumpP; }
+            set { jumpP = value; }
+        }
         public bool F
         {
             get { return fall; }
@@ -135,13 +128,10 @@ namespace Game1
             get { return dead; }
             set { dead = value; }
         }
-        public bool GL
+        public bool GG
         {
-            get { return gotLoot; }
-        }
-        public string Loot
-        {
-            get { return loot; }
+            get { return gg; }
+            set { gg = value; }
         }
     }
 }

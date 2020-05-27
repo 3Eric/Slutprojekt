@@ -306,8 +306,16 @@ namespace Game1
                 // kollar ifall spelaren blir sedd av en fiende
                 if (e.sight.Intersects(p.P) && e.sw.ElapsedMilliseconds == 0)
                 {
-                    e.sw.Start();
-                    pl.Add(new Bullet(e.gun.X, e.gun.Y + 1, e.Speed, ww, wh, "e"));
+                    if (e.GG == true)
+                    {
+                        e.sw.Start();
+                        pl.Add(new Bullet(e.gun.X, e.gun.Y + 1, e.Speed, ww, wh, "e"));
+                    }
+                    else if (e.GG == false && e.F == false && kstate.IsKeyDown(Keys.Space))
+                    {
+                        e.F = true;
+                        e.FS = e.JP;
+                    }
                 }
                 // kollar ifall fiender lämnar fönstret
                 if (e.enemy.Y > wh)
