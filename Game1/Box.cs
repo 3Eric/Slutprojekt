@@ -49,7 +49,9 @@ namespace Game1
                 fallSpeed -= g;
             }
         }
-        // placerar "auran" vid lådans position
+        /// <summary>
+        /// Gör så att auran följer lådan
+        /// </summary>
         public void UpdateAura()
         {
             aura.X = box.X - (aura.Width - box.Width) / 2;

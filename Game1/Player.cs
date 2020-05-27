@@ -131,6 +131,9 @@ namespace Game1
                 al.Add(new Rectangle(ww / 80 * i + ww / 40 * i, ww / 30 + ww / 80, ww / 40, ww / 40));
             }
         }
+        /// <summary>
+        /// Ökar spelarens stats när spelaren plockar upp en uppgrade
+        /// </summary>
         public void StatUpgrade(int ww)
         {
             if (pSpeed >= ww / 42)

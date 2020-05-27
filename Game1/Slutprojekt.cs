@@ -231,34 +231,6 @@ namespace Game1
                 room.RC = -1;
                 room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
             }
-            if (kstate.IsKeyDown(Keys.B) && oldstate.IsKeyUp(Keys.B))
-            {
-                bl.Add(new Box(50, wh - wh / 5 - 30, ww));
-            }
-            else if (kstate.IsKeyDown(Keys.M) && oldstate.IsKeyUp(Keys.M))
-            {
-                el.Add(new Enemy(120, 0, ww, wh));
-            }
-            else if (kstate.IsKeyDown(Keys.N) && oldstate.IsKeyUp(Keys.N))
-            {
-                cl.Add(new Chest(100, room.Ground.Y - ww / 26, ww));
-            }
-            else if (kstate.IsKeyDown(Keys.C) && oldstate.IsKeyUp(Keys.C))
-            {
-                p.HP = p.MHP;
-                p.UpdateHealth(ww);
-                p.Ammo = p.MAmmo;
-                p.UpdateAmmo(ww);
-                el.Clear();
-                bl.Clear();
-                cl.Clear();
-                ll.Clear();
-                end = false;
-            }
-            else if (kstate.IsKeyDown(Keys.R) && oldstate.IsKeyUp(Keys.R))
-            {
-                room.Generate(ref p, ref rlg, ref bl, ref cl, ref ll, ref el, ww, wh);
-            }
 
             oldstate = Keyboard.GetState();
             base.Update(gameTime);
